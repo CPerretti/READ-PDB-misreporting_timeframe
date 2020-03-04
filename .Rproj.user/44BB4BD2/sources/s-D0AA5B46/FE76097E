@@ -7,13 +7,13 @@
     "folds" : "",
     "hash" : "0",
     "id" : "FE76097E",
-    "lastKnownWriteTime" : 1583331367,
-    "last_content_update" : 1583331367376,
+    "lastKnownWriteTime" : 1583335689,
+    "last_content_update" : 1583335689,
     "path" : "C:/Users/charles.perretti/Projects/misreporting-timeframe/functions/setupModel.R",
     "project_path" : "functions/setupModel.R",
     "properties" : {
-        "cursorPosition" : "19,37",
-        "scrollLine" : "2"
+        "cursorPosition" : "35,20",
+        "scrollLine" : "26"
     },
     "read_only" : false,
     "read_only_alternatives" : [

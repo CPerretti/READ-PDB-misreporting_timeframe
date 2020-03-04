@@ -33,7 +33,7 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL) {
   conf <- loadConf(dat, paste0(path_root, "SAM/model.cfg"))
     
   # Set configuration if estimating misreporting
-  noScaledYears <- 30
+  noScaledYears <- 20
   keyLogScale <- conf$keyLogFsta #linking of scale timeseries
   keyLogScale[keyLogScale > -1] <- 0:(length(keyLogScale[keyLogScale > -1])-1)
   switch(misreportingType,
