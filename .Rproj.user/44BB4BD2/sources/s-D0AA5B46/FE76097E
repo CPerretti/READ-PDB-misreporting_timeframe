@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583331325855.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "FE76097E",
+    "lastKnownWriteTime" : 1583331367,
+    "last_content_update" : 1583331367376,
+    "path" : "C:/Users/charles.perretti/Projects/misreporting-timeframe/functions/setupModel.R",
+    "project_path" : "functions/setupModel.R",
+    "properties" : {
+        "cursorPosition" : "19,37",
+        "scrollLine" : "2"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

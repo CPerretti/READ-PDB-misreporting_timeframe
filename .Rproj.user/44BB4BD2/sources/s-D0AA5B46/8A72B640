@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1583330815333.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "8A72B640",
+    "lastKnownWriteTime" : 1583329363,
+    "last_content_update" : 1583329363,
+    "path" : "C:/Users/charles.perretti/Projects/misreporting-timeframe/run.R",
+    "project_path" : "run.R",
+    "properties" : {
+        "cursorPosition" : "30,18",
+        "scrollLine" : "24"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
