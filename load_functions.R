@@ -1,0 +1,5 @@
+source("./functions/setupModel.R") 
+source("./functions/compareTs.R")
+source("./functions/extractTs.R")
+source("./functions/diffTs.R")
+source("./functions/sam.fit_cp.R")
