@@ -38,7 +38,7 @@ compareTs <- function(base, `with misreporting`) {
     ggplot(diffs, aes(x = year, y = diffPc)) +
     geom_line() + 
     theme_bw() +
-    facet_wrap(~variableLabel, scales = "free") +
+    facet_wrap(~variable, scales = "free") +
     ylab(paste0("Percent difference (",
                 deparse(substitute(`with misreporting`)),
                 " - ",
