@@ -46,3 +46,7 @@ compareTs(fitBase, fitMis)
 AIC(fitBase)
 AIC(fitMis)
 
+# Estimated misreporting correlation
+transf <- function(x) 2/(1 + exp(-2 * x)) - 1
+ar1coef <- transf(fitMis$pl$itrans_rhoS)
+
