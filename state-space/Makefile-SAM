@@ -1,0 +1,21 @@
+SAMDIRS := $(shell echo 'cat(list.dirs()[grep("SAM$$", list.dirs())])' | R --slave)
+
+SAMSOURCE := $(foreach dir,$(SAMDIRS),$(dir)/run.R)
+SAMTARGET := $(foreach dir,$(SAMDIRS),$(dir)/Mohn.txt)
+
+$(SAMTARGET):
+	cd $(@D); make
+
+runsam: $(SAMTARGET)
+
+mohn: $(SAMTARGET)
+	@for m in $(SAMTARGET); do echo $$m && cat $$m; done
+
+mse: $(SAMTARGET)
+	@for d in $(SAMDIRS); do cd $$d && pwd && echo 'X<-read.csv("tab2.csv"); mean((X$$logObs-X$$pred)^2, na.rm=TRUE)' | R --slave && cd -; done
+
+plot: $(SAMTARGET)
+	@for d in $(SAMDIRS); do cd $$d && cd .. && echo 'source("../plot.R")' | R --slave && cd ..; done
+
+clean:
+	for d in $(SAMDIRS); do cd $$d && make clean && cd -; done
