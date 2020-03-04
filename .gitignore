@@ -1,4 +1,7 @@
-*.Rproj*
+.Rproj*
+.Rproj.user\*
+.Rproj.user\44BB4BD2\sources\*
+.Rproj.user\44BB4BD2\pcs\*
 .Rhistory
 .RData
 .Ruserdata
