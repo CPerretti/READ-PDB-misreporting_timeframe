@@ -1,6 +1,7 @@
 diffTs <- function(base, `with misreporting`) {
   diffs <-
-    rbind(extractTs(base), extractTs(`with misreporting`)) %>%
+    rbind(extractTsSdrep(base), 
+          extractTsSdrep(`with misreporting`)) %>%
     group_by(variable, year, variableLabel) %>%
     mutate(diffRaw = value[model == substitute(`with misreporting`)] - 
              value[model == substitute(base)],

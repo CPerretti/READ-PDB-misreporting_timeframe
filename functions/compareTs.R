@@ -1,11 +1,11 @@
 # Setup data and params for sam model #####################
 compareTs <- function(base, `with misreporting`) {
 
-  modelTs <- rbind(extractTs(base), extractTs(`with misreporting`))
+  tsSdrep <- rbind(extractTsSdrep(base), extractTsSdrep(`with misreporting`))
 
   # Plot timeseries
   p <- 
-    ggplot(modelTs, aes(x = year, y = value, color = model)) +
+    ggplot(tsSdrep, aes(x = year, y = value, color = model)) +
     geom_line() +
     geom_point(aes(y = obs), color = "black", shape = 4) +
     facet_wrap(~variableLabel, scales = "free_y") +

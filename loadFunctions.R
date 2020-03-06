@@ -1,5 +1,7 @@
 source("./functions/setupModel.R") 
 source("./functions/compareTs.R")
-source("./functions/extractTs.R")
+source("./functions/extractTsSdrep.R")
+source("./functions/extractTsPl.R")
 source("./functions/diffTs.R")
+source("./functions/plotReTsAtAge.R")
 source("./functions/sam.fit_cp.R")

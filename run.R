@@ -24,7 +24,7 @@ library(ggplot2)
 library(tidyr)
 
 # Load functions
-source("load_functions.R")
+source("loadFunctions.R")
 
 
 # Load data and setup SAM model configurations
@@ -37,16 +37,19 @@ setupMis <- setupModel(stock_dir = "GOMcod",
 fitBase <- sam.fit(setupBase$dat, setupBase$conf, setupBase$par)
 
 fitMis <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par)
-                     #map = list("itrans_rhoS" = factor(NA)))
   
 # Compare models
 compareTs(fitBase, fitMis)
 
-
 AIC(fitBase)
 AIC(fitMis)
+
+# Plot random effects at age
+plotReTsAtAge(fitMis)
+
 
 # Estimated misreporting correlation
 transf <- function(x) 2/(1 + exp(-2 * x)) - 1
 ar1coef <- transf(fitMis$pl$itrans_rhoS)
+
 
