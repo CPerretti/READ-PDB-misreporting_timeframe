@@ -30,7 +30,7 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL) {
                         catch.mean.weight = cw)
   
   # Load model configuration file
-  conf <- loadConf(dat, paste0(path_root, "SAM/model.cfg"))
+  conf <- if(is.null(conf)) loadConf(dat, paste0(path_root, "SAM/model.cfg"))
     
   # Set configuration if estimating misreporting
   noScaledYears <- 20

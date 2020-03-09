@@ -1,3 +1,5 @@
+source("./functions/sim.R")
+source("./functions/prepSimData.R")
 source("./functions/setupModel.R") 
 source("./functions/compareTs.R")
 source("./functions/extractTsSdrep.R")
@@ -5,3 +7,4 @@ source("./functions/extractTsPl.R")
 source("./functions/diffTs.R")
 source("./functions/plotReTsAtAge.R")
 source("./functions/sam.fit_cp.R")
+

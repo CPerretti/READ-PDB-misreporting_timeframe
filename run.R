@@ -26,6 +26,23 @@ library(tidyr)
 # Load functions
 source("loadFunctions.R")
 
+## SIMULATED DATA ANALYSIS ##########################################
+# Configure simulations
+
+# Generate simulations
+simOut <-
+  sim(noScaledYears = 20,
+      scenario = "random walk")
+
+# Prep simulation data for read.ices()
+prepSimData(simOut = simOut) 
+
+# Load simulated data and setup SAM model configurations
+setupBase <- setupModel(conf = fitNScod$conf,
+                        stock_dir = "simData",
+                        misreportingType = "rw")
+
+## REAL DATA ANALYSIS ###############################################
 
 # Load data and setup SAM model configurations
 setupBase <- setupModel(stock_dir = "GOMcod", 
@@ -51,5 +68,3 @@ plotReTsAtAge(fitMis)
 # Estimated misreporting correlation
 transf <- function(x) 2/(1 + exp(-2 * x)) - 1
 ar1coef <- transf(fitMis$pl$itrans_rhoS)
-
-
