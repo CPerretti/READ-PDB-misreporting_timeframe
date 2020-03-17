@@ -1,8 +1,5 @@
 ## Simulation model #######################################
 sim <- function(fit, keyLogScale, noScaledYears, scenario) {
-  # Load NScod example to configure simulations
-  load("./wg_MGWG/state-space/simData/fitNScod.Rdata")
-  fit <- fitNScod
   
   fit$conf$constRecBreaks <- numeric(0) # Needed for new SAM
   keyLogScale <- fit$conf$keyLogFsta
@@ -22,7 +19,7 @@ sim <- function(fit, keyLogScale, noScaledYears, scenario) {
            # logS <- matrix(data = log(rnorm(nAs * noScaledYears, 8, 2)),
            #                    nrow = nAs, ncol = noScaledYears)
          },
-         `random walk` = { # RW from 1 with reflecting boundary at 1
+         `rw` = { # RW from 1 with reflecting boundary at 1
            logSdLogScale <- log(0.2)
            rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYears)
            errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
@@ -241,6 +238,8 @@ sim <- function(fit, keyLogScale, noScaledYears, scenario) {
   
   trueParams <- list(data = fit$data, conf = fit$conf, 
                      sdrep = fit$sdrep, pl = fit$pl)
+  trueParams$conf$keyScaledYears <- 
+    (max(fit$data$years) - noScaledYears + 1):max(fit$data$years)
   trueParams$pl$logS <- logS
   if (scenario == "random walk") trueParams$pl$logSdLogScale <- logSdLogScale
   trueParams$pl$logN <- logN

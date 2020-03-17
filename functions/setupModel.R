@@ -1,5 +1,6 @@
 # Setup data and params for sam model #####################
-setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL) {
+setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
+                       noScaledYears = NULL) {
   
   path_root <- paste0("./wg_MGWG/state-space/", stock_dir, "/")
   
@@ -30,14 +31,13 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL) {
                         catch.mean.weight = cw)
   
   # Load model configuration file
-  conf <- if(is.null(conf)) loadConf(dat, paste0(path_root, "SAM/model.cfg"))
+  if(is.null(conf)) conf <- loadConf(dat, paste0(path_root, "SAM/model.cfg"))
     
   # Set configuration if estimating misreporting
-  noScaledYears <- 20
   keyLogScale <- conf$keyLogFsta #linking of scale timeseries
   keyLogScale[keyLogScale > -1] <- 0:(length(keyLogScale[keyLogScale > -1])-1)
   switch(misreportingType,
-         rw = {
+         `rw` = {
            conf$noScaledYears <- noScaledYears
            conf$keyLogScale <- keyLogScale
            conf$keyVarS <- conf$keyVarF #linking of scale variances
