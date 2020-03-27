@@ -1,5 +1,5 @@
 ## Simulation model #######################################
-sim <- function(fit, keyLogScale, noScaledYears, scenario) {
+sim <- function(fit, noScaledYears, sim_label) {
   
   fit$conf$constRecBreaks <- numeric(0) # Needed for new SAM
   keyLogScale <- fit$conf$keyLogFsta
@@ -12,7 +12,7 @@ sim <- function(fit, keyLogScale, noScaledYears, scenario) {
   # Setup keyLogScale to have unique logScale for each age that is fished
   nAs <- sum(keyLogScale[1,] > -1)
   
-  switch(scenario,
+  switch(sim_label$scenario,
          `uniform random` = {
            logS <- matrix(data = log(runif(nAs * noScaledYears, 1.5, 10)),
                               nrow = nAs, ncol = noScaledYears)
@@ -240,8 +240,8 @@ sim <- function(fit, keyLogScale, noScaledYears, scenario) {
                      sdrep = fit$sdrep, pl = fit$pl)
   trueParams$conf$keyScaledYears <- 
     (max(fit$data$years) - noScaledYears + 1):max(fit$data$years)
-  trueParams$pl$logS <- logS
-  if (scenario == "random walk") trueParams$pl$logSdLogScale <- logSdLogScale
+  trueParams$pl$logS <- logS_full
+  if (sim_label$scenario == "random walk") trueParams$pl$logSdLogScale <- logSdLogScale
   trueParams$pl$logN <- logN
   dimnames(f) <- list(paste0("tru.", c(1:nA)), fit$data$years)
   trueParams$pl$logF <- logF
@@ -259,6 +259,7 @@ sim <- function(fit, keyLogScale, noScaledYears, scenario) {
               Ctru_mt = Ctru_mt, 
               Ctru_N = Ctru_N, 
               Sobs_N = Sobs_N, 
-              Stru_N = Stru_N))
+              Stru_N = Stru_N,
+              sim_label = sim_label))
   
 }

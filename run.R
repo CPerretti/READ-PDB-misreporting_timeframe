@@ -18,69 +18,73 @@
 # Install forked version from github
 #devtools::install_github("perretti/SAM2/stockassessment/", force = TRUE)
 
+library(MASS)
 library(stockassessment2) # modified SAM 
 library(stockassessment) # original SAM 
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(parallel)
+library(purrr)
+
 
 # Load functions
 source("loadFunctions.R")
 
-# Number of scaled years
-noScaledYearsSim <- 10
-noScaledYearsFit <- 20
 
 ## SIMULATED DATA ANALYSIS ##########################################
-# Configure simulations
-# Load NScod example to configure simulations
-load("./wg_MGWG/state-space/simData/fitNScod.Rdata")
 
-# Generate simulations
-simOut <-
-  sim(fit = fitNScod,
-      noScaledYears = noScaledYearsSim,
-      scenario = "uniform random")
+#### Configure simulations ####
+noScaledYearsSim <- 10
+noScaledYearsFit <- 20
+scenarios <- c("uniform random", 
+               "rw",
+               "fixed",
+               "no misreporting")
+nRep <- 150#300
+sim_label <- expand.grid(replicate = 1:nRep, 
+                         scenario = scenarios, 
+                         stringsAsFactors = F)
 
-# Prep simulation data for read.ices()
-prepSimData(simOut = simOut) 
+#### RUN SIMULATIONS AND FIT MODEL(S) ####
+simsAndFits <- simulateAndFit(noScaledYearsSim, sim_label)
 
-# Load simulated data and setup SAM model configurations
-setupMis <- setupModel(conf = fitNScod$conf,
-                       stock_dir = "simData",
-                       misreportingType = "rw",
-                       noScaledYears = noScaledYearsFit)
+fitMisSimAccept <- simsAndFits$fitMisSimAccept
+simOutAccept <- simsAndFits$simOutAccept
+setupAccept <- simsAndFits$setupAccept
 
-# Fit models
-fitMisSim <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par)
 
-# Plot random effects at age
-plotReTsAtAge(fitMisSim, simOut)
+#### Calculate error ####
+err <- calcErr(fitMisSimAccept, simOutAccept)
 
-# ## REAL DATA ANALYSIS ###############################################
+#### Calculate confusion table ####
+confusionTables <- calcConfusion(err)
+
+## Make plots ##
+plots(fitMisSimAccept, simOutAccept, err)
+
+
+## REAL DATA ANALYSIS ###############################################
 
 # Load data and setup SAM model configurations
-setupBase <- setupModel(stock_dir = "GOMcod",
-                        misreportingType = "no misreporting")
-setupMis <- setupModel(stock_dir = "GOMcod",
-                       misreportingType = "rw",
-                       noScaledYears = noScaledYearsFit)
-
-# Fit models
-fitBaseReal <- sam.fit(setupBase$dat, setupBase$conf, setupBase$par)
-
-fitMisReal <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par)
-
-# Compare models
-compareTs(fitBaseReal, fitMisReal)
-
-# AIC(fitBase)
-# AIC(fitMis)
-
-# Plot random effects at age
-plotReTsAtAge(fitMisReal)
-
-
-# Estimated misreporting correlation
-transf <- function(x) 2/(1 + exp(-2 * x)) - 1
-(ar1coef <- transf(fitMisReal$pl$itrans_rhoS))
+# setupBase <- setupModel(stock_dir = "GOMcod",
+#                         misreportingType = "no misreporting")
+# setupMis <- setupModel(stock_dir = "GOMcod",
+#                        misreportingType = "rw",
+#                        noScaledYears = noScaledYearsFit)
+# 
+# # Fit models
+# fitBaseReal <- sam.fit(setupBase$dat, setupBase$conf, setupBase$par)
+# 
+# fitMisReal <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par)
+# 
+# # Compare models
+# compareTs(fitBaseReal, fitMisReal)
+# 
+# # Plot example random effects at age
+# plotReTsAtAge(fitMisReal)
+# 
+# 
+# # Estimated misreporting correlation
+# transf <- function(x) 2/(1 + exp(-2 * x)) - 1
+# (ar1coef <- transf(fitMisReal$pl$itrans_rhoS))

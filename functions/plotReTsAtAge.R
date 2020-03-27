@@ -24,7 +24,8 @@ plotReTsAtAge <- function(fit, simOut = NULL) {
     scale_fill_manual(values = c("black", "red"))+
     scale_x_continuous(breaks = seq(min(dat2plot$year), 
                                     max(dat2plot$year), by = 10)) +
-    xlab("Year")
+    xlab("Year") +
+    theme(legend.title = element_blank())
   
   plot(p)
   
@@ -44,6 +45,7 @@ plotReTsAtAge <- function(fit, simOut = NULL) {
       theme(axis.text.x = element_text(size = 7)) +
       ylab("Scale parameter estimate") +
       xlab("Year") +
+      theme(legend.title = element_blank()) +
       if(!is.null(simOut)) {
        geom_vline(xintercept = min(simOut$trueParams$conf$keyScaledYears))
       }

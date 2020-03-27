@@ -1,6 +1,7 @@
 ## Extract random effect timeseries and sd's #######################
 extractTsPl <- function(fit, simOut = NULL) {
-  if(!is.null(simOut)) {
+  # if simOut is given this extracts true vals
+  if(!is.null(simOut)) { 
     fit$pl <- simOut$trueParams$pl
   }
   
@@ -13,9 +14,10 @@ extractTsPl <- function(fit, simOut = NULL) {
     varName <- substr(names(fit$pl[h]), 4, 999)
     yearFit <- if (varName == "S" & is.null(simOut)) {
       fit$conf$keyScaledYears
-    } else if (varName == "S" & !is.null(simOut)) {
-      simOut$trueParams$conf$keyScaledYears
-      } else {as.numeric(fit$data$years)}
+    } else { #if (varName == "S" & !is.null(simOut)) {
+      #simOut$trueParams$conf$keyScaledYears
+      #} else {
+      as.numeric(fit$data$years)}
     
     rownames(fit$pl[[h]]) <- paste0("fit.", 1:nrow(fit$pl[[h]]))
     if(is.null(simOut)){
