@@ -1,5 +1,6 @@
 ## Simulation model #######################################
-sim <- function(fit, noScaledYears, sim_label) {
+sim <- function(fit, noScaledYears, sim_label,
+                unifLower, unifUpper, mu_c, sd_c) {
   
   fit$conf$constRecBreaks <- numeric(0) # Needed for new SAM
   keyLogScale <- fit$conf$keyLogFsta
@@ -14,29 +15,28 @@ sim <- function(fit, noScaledYears, sim_label) {
   
   switch(sim_label$scenario,
          `uniform random` = {
-           logS <- matrix(data = log(runif(nAs * noScaledYears, 1.5, 10)),
+           logS <- matrix(data = log(runif(nAs * noScaledYears, 
+                                           unifLower, unifUpper)),
                               nrow = nAs, ncol = noScaledYears)
            # logS <- matrix(data = log(rnorm(nAs * noScaledYears, 8, 2)),
            #                    nrow = nAs, ncol = noScaledYears)
          },
-         `rw` = { # RW from 1 with reflecting boundary at 1
-           logSdLogScale <- log(0.2)
+         `rw` = { # RW
+           logSdLogScale <- log(sd_c)
            rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYears)
            errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
                           nrow = nAs, ncol = noScaledYears) #uncorrelated error
-           #errS[errS[,1] < 0, 1] <- -errS[errS[,1] < 0, 1] #reflecting boundary
-           rw_logS_mat[,1] <- 1 + errS[,1]
+           
+           rw_logS_mat[,1] <- mu_c + errS[,1]
            for(i in 2:noScaledYears){
              rw_logS_mat[,i] <- rw_logS_mat[,i-1] + errS[,i]
-             #ind <- rw_logS_mat[,i] < 1 # index to reflect
-             #rw_logS_mat[ind, i] <- rw_logS_mat[ind, i-1] - errS[ind,i]
            }
            
            logS <- matrix(data = rw_logS_mat, nrow = nAs, ncol = noScaledYears)
          },
          fixed = { 
            # Misreporting on all ages
-           logS <- matrix(data = rep(log(runif(1, 1.5, 10)),
+           logS <- matrix(data = rep(log(runif(1, unifLower, unifUpper)),
                                          times = nAs * noScaledYears),
                               nrow = nAs, ncol = noScaledYears)
            # Misreporting only on ages 1-3
@@ -260,6 +260,8 @@ sim <- function(fit, noScaledYears, sim_label) {
               Ctru_N = Ctru_N, 
               Sobs_N = Sobs_N, 
               Stru_N = Stru_N,
+              mu_c = mu_c,
+              sd_c = sd_c,
               sim_label = sim_label))
   
 }

@@ -80,6 +80,31 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim) {
     print(p)
     
     
+    # Plot mean percent error
+    p <-
+      ggplot(err2plot_Scale_overall,
+             aes(x = year, color = model#, 
+                 #fill = model
+                 )) +
+      geom_line(aes(y = error_pc_mean)) +
+      geom_hline(yintercept = 0) +
+      geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
+                                                "fixed scenario", 
+                                                "random walk scenario",
+                                                "uniform random scenario"),
+                                   xint = c(NA, rep(min(scaled_yearsSim), 3))),
+                 aes(xintercept = xint)) +
+      facet_grid(~scenario) +
+      theme_bw() +
+      xlab("Year") +
+      ylab("Mean percent error (fit - true)/true") +
+      scale_color_manual(values = colors2use[2:3]) +
+      #scale_fill_manual(values = colors2use[2:3]) +
+      ggtitle("Scale estimation error") 
+    
+    print(p)
+    
+    
     # Plot example fit vs true scale
     err2plot_Scale <-
       err %>%

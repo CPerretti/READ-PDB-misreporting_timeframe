@@ -1,4 +1,5 @@
-simulateAndFit <- function(noScaledYearsSim, sim_label){
+simulateAndFit <- function(noScaledYearsSim, sim_label, 
+                           unifLower, unifUpper, mu_c, sd_c){
   # Load NScod example to configure simulations
   load("./wg_MGWG/state-space/simData/fitNScod.Rdata")
   
@@ -6,12 +7,28 @@ simulateAndFit <- function(noScaledYearsSim, sim_label){
   simOut    <- vector("list", length = nrow(sim_label))
   setupMis  <- vector("list", length = nrow(sim_label))
   
+  unifLower <- 1.5
+  unifUpper <- 10
+  # Choose initial distribution parameters for rw that generate a time
+  # series mean and variance that most closely matches the other
+  # two scenarios.
+  opt_par <-optim(par = c(1, 0.2), # starting par[1] = mu_c, par[2] = sd_c
+                  fn = initsObj, 
+                  tsmean_target = 0.5 * (unifUpper + unifLower),
+                  tsvar_target = 1/12 * (unifUpper - unifLower)^2, 
+                  T = noScaledYearsSim)
+  mu_c <- opt_par$par[1]
+  sd_c <- opt_par$par[2]
   # Generate simulations
   for (i in 1:nrow(sim_label)) {
     simOut[[i]] <-
       sim(fit = fitNScod,
           noScaledYears = noScaledYearsSim,
-          sim_label = sim_label[i,])
+          sim_label = sim_label[i,],
+          unifLower = unifLower, 
+          unifUpper = unifUpper,
+          mu_c = mu_c, 
+          sd_c = sd_c)
     
     # Prep simulation data for read.ices()
     prepSimData(simOut = simOut[[i]]) 

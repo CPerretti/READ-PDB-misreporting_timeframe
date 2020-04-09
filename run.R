@@ -1,17 +1,6 @@
 # Project to evalute methods for estimating the timeframe of
 # misreporting using a modified version of SAM.
 #
-# Tentative plan
-# (x) Modify SAM to estimate correlated random walk misreporting 
-# (x) Self-test new SAM model with correct misreporting timeframe
-# (x) Self-test again but with incorrect misreporting timeframe to
-#     see if it can identify the start of misreporting
-# (x) Test in scenarios where it is misspecified
-# ( ) Come up with some error statistics and calculate them
-# ( ) Examine whether prediction metrics are useful for model selection
-# ( ) Apply to real data perhaps using prediction metrics to choose model
-# ( ) Examine how different our conclusions would be if we estimated
-#     misreporting
 
 # Install local forked version of package with changes
 #devtools::install_local("../SAM2/stockassessment/", force = TRUE)
@@ -41,7 +30,7 @@ scenarios <- c("uniform random",
                "rw",
                "fixed",
                "no misreporting")
-nRep <- 150#300
+nRep <- 10#0#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)
