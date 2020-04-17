@@ -43,7 +43,7 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
            conf$keyVarS <- conf$keyVarF #linking of scale variances
            conf$keyScaledYears <- (max(dat$years) - noScaledYears + 1):max(dat$years)
            conf$corFlagS <- 2 #type of misreporting correlation among ages
-           conf$fracMixS <- conf$fracMixF #fraction of mixed model
+           #conf$fracMixS <- 0.5#conf$fracMixF #fraction of mixed model
               },
          fixed = {
            conf$noScaledYears  <- noScaledYears

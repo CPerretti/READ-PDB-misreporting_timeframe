@@ -40,6 +40,9 @@ simulateAndFit <- function(noScaledYearsSim, sim_label,
                                 noScaledYears = noScaledYearsFit)
   }
   
+  # x=setupMis[[1]]# << TEMP TO DEBUG
+  # out=sam.fit_cp(x$dat, x$conf, x$par)#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
+  
   # Fit model
   cl <- makeCluster(detectCores() - 1) #setup nodes for parallel
   #load stockassessment and functions to each node

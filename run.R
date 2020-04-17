@@ -30,7 +30,8 @@ scenarios <- c("uniform random",
                "rw",
                "fixed",
                "no misreporting")
-nRep <- 10#0#300
+set.seed(321)
+nRep <- 100#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)
@@ -40,7 +41,7 @@ simsAndFits <- simulateAndFit(noScaledYearsSim, sim_label)
 
 fitMisSimAccept <- simsAndFits$fitMisSimAccept
 simOutAccept <- simsAndFits$simOutAccept
-setupAccept <- simsAndFits$setupAccept
+setupAccept <- simsAndFits$setupMisAccept
 
 
 #### Calculate error ####
@@ -51,6 +52,12 @@ confusionTables <- calcConfusion(err)
 
 ## Make plots ##
 plots(fitMisSimAccept, simOutAccept, err)
+
+## Table of overall estimation error
+err %>%
+  filter(variable %in% c("catch", "F", "N", "ssb")) %>%
+  group_by(scenario, variable) %>%
+  summarise(mean_mape = mean(abs_error_pc))
 
 
 ## REAL DATA ANALYSIS ###############################################
