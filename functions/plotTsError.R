@@ -1,7 +1,7 @@
 ## Plot timeseries error ##################################
 plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim) {
   
-  colors2use <- RColorBrewer::brewer.pal(3, "Dark2")
+  colors2use <- RColorBrewer::brewer.pal(4, "Dark2")
   
   
   # Plot mean error in catch and ssb vs year
@@ -27,8 +27,8 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim) {
     theme_bw() +
     xlab("Year") +
     ylab("Mean absolute percent error") +
-    scale_color_manual(values = colors2use[1:3]) +
-    scale_fill_manual(values = colors2use[1:3]) +
+    scale_color_manual(values = colors2use) +
+    scale_fill_manual(values = colors2use) +
     ggtitle("Estimation error")  +
     theme(axis.title   = element_text(size = 14),
           plot.title   = element_text(size = 16),
@@ -169,123 +169,5 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim) {
     #        width = 9, height = 10, dpi = 500)
     
   }
-  
-  
-  # Plot histogram of scale percent errors in uniform scenario
-  # ggplot(err %>%
-  #          dplyr::filter(model != "no misreporting",
-  #                        scenario == "uniform random scenario",
-  #                        variable == "F"),
-  #        aes(x = abs_error_pc, color = model, fill = model)) +
-  #   geom_histogram(alpha=.5, position="identity") +
-  #   geom_rug(data = err %>%
-  #              dplyr::filter(model != "no misreporting",
-  #                            scenario == "uniform random scenario") %>% 
-  #              dplyr::group_by(model, scenario) %>%
-  #              dplyr::summarise(mape = mean(abs_error_pc, na.rm = T)),
-  #            aes(x = mape, color = model),
-  #            size = 3) +
-  #   theme_bw() +
-  #   guides(color=guide_legend(title="Estimation model")) +
-  #   guides(fill=guide_legend(title="Estimation model")) +
-  #   scale_color_manual(values = colors2use[2:3]) +
-  #   scale_fill_manual(values = colors2use[2:3]) +
-  #   ylab("Frequency") +
-  #   xlab("MAPE") +
-  #   theme(axis.title = element_text(size = 16),
-  #         axis.text = element_text(size = 13),
-  #         strip.text = element_text(size = 10),
-  #         legend.text = element_text(size = 12))
-  
-  # Plot replicate pairs of scale error vs variable error average over years
-  # within a replicate and age.
-  # ggplot(err %>%
-  #          dplyr::filter(model != "no misreporting",
-  #                        scenario == "uniform random scenario",
-  #                        year %in% scaled_yearsFit) %>%
-  #          group_by(replicate, 
-  #                   age, model, scenario, variable) %>%
-  #          dplyr::summarise(mape = mean(abs_error_pc, na.rm = T)) %>%
-  #          dplyr::select(replicate, 
-  #                        mape, variable, model, 
-  #                        age, scenario)  %>%
-  #          tidyr::spread(variable, mape) %>%
-  #          tidyr::gather(variable, mape, -model, -scenario, 
-  #                        -S, 
-  #                        -replicate, 
-  #                        -age),
-  #        aes(x = S, y = mape, color = model, 
-  #            group = variable, shape = variable)) +
-  #   geom_point() +
-  #   #geom_line(color = "black") +
-  #   facet_wrap(~age, scales = "free_y") +
-  #   scale_color_manual(values = colors2use[2:3]) +
-  #   xlab("Estimation error of Scale parameter (MAPE)") +
-  #   ylab("Estimation error of variable (MAPE)") +
-  #   ggtitle("Uniform random scenario")
-  
-  # Plot CDF of MAPEs
-  # ggplot(err %>%
-  #          dplyr::filter(model != "no misreporting",
-  #                        scenario == "uniform random scenario",
-  #                        variable %in% c("S"),
-  #                        year %in% scaled_yearsFit) %>%
-  #          group_by(replicate, 
-  #                   age, 
-  #                   model, scenario, variable) %>%
-  #          dplyr::summarise(mape = mean(abs_error_pc, na.rm = T)) %>%
-  #          dplyr::select(replicate, 
-  #                        mape, variable, model, 
-  #                        age, scenario)  %>%
-  #          tidyr::spread(variable, mape) %>%
-  #          tidyr::gather(variable, mape, -model, -scenario, 
-  #                        -S, 
-  #                        -replicate, 
-  #                        -age),
-  #        aes(x = S, color = model)) +
-  #   stat_ecdf(geom = "line") +
-  #   #geom_line(color = "black") +
-  #   facet_wrap(~age, scales = "free") +
-  #   scale_color_manual(values = colors2use[2:3]) +
-  #   xlab("Estimation error of Scale (MAPE)") +
-  #   ylab("CDF(x)") +
-  #   ggtitle("Uniform random scenario")
-  
-  # Plot pairs of mean variable error vs Scale error for uniform scenario
-  # errPairs <- 
-  #   err %>%
-  #   dplyr::filter(year %in% scaled_yearsFit) %>%
-  #   dplyr::group_by(model, scenario, variable) %>%
-  #   #dplyr::filter(abs_error_pc < quantile(abs_error_pc, 0.50, na.rm=T)) %>%
-  #   dplyr::summarise(mape = mean(abs_error_pc, na.rm = T),
-  #                    mape_se = sd(abs_error_pc, na.rm = T)/
-  #                      sqrt(length(!is.na(abs_error_pc)))) %>%
-  #   dplyr::rename(`Estimation model` = model,
-  #                 Variable = variable)
-  # 
-  # p <- ggplot(errPairs %>%
-  #               dplyr::select(-mape_se) %>%
-  #               tidyr::spread(Variable, mape) %>%
-  #               tidyr::gather(Variable, 
-  #                             mape, -`Estimation model`,
-  #                             -scenario, -S) %>%
-  #               dplyr::filter(`Estimation model` != "no misreporting",
-  #                             scenario == "uniform random scenario",
-  #                             Variable != "catch_observed")) +
-  #   aes(x = S, y = mape, color = `Estimation model`, 
-  #       group = Variable, shape = Variable) +
-  #   geom_point(size = 4) +
-  #   #facet_wrap(~age) +
-  #   geom_line(color = "black") +
-  #   scale_color_manual(values = colors2use[2:3]) +
-  #   xlab("Estimation error of Scale parameter (MAPE)") +
-  #   ylab("Estimation error of variable (MAPE)") +
-  #   ggtitle("Uniform random scenario parameter error") +
-  #   theme_bw()
-  # 
-  # print(p)
-  
-  #ggsave("./figures/scale_err_vs_other_err.jpg", width = 6, height = 6,
-  #       dpi = 500)
   
 }

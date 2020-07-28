@@ -15,9 +15,16 @@ calcReTsError <- function(fitSim, simOut) {
            decile = ceiling(10 * pnorm(q    = log(tru), 
                                        mean = log(fit), 
                                        sd   = sdLog)),
-           model = ifelse(fitSim$conf$corFlagS %>% is.numeric, "random walk", NA),
            scenario = simOut$sim_label$scenario,
-           replicate = simOut$sim_label$replicate)
+           replicate = simOut$sim_label$replicate,
+           model = fitSim$model)
+  
+  # If the fit is a leave-out fit, calc error on leave-out years only
+  if(!is.null(fitSim[["leaveOutYears"]])) {
+    errRe <- errRe %>% 
+      filter(year %in% fitSim[["leaveOutYears"]]) %>%
+      mutate(leaveOutYears = as.character(list(fitSim[["leaveOutYears"]])))
+  }
   
   return(errRe)
   }

@@ -20,8 +20,8 @@ rwTsVar <- function(mu_c, sd_c, mu_e, sd_e, T) {
 
 # Objective function for initis to be minimized 
 initsObj <- function(par, tsmean_target, tsvar_target, T) {
-  mu_c <- par[1]
-  sd_c <- par[2]
+  mu_c <- exp(par[1]) #bounded [0, Inf]
+  sd_c <- 0.001 + exp(par[2]) # bounded [0.001, Inf]
   ts_mean <- rwTsMean(mu_c, sd_c, mu_e = 0, sd_e = sd_c, T)
   ts_var  <- rwTsVar(mu_c, sd_c, mu_e = 0, sd_e = sd_c, T)
   

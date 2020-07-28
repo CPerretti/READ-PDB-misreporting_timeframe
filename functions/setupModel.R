@@ -17,6 +17,8 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
   pm <- read.ices(paste0(path_root, toupper(stock_dir), "_pm.dat")) # proportion of m before spawning
   sw <- read.ices(paste0(path_root, toupper(stock_dir), "_sw.dat")) # stock weight-at-age (kg)
   
+  
+  cn[which(cn== 0)] <- -1
   # setup the data as needed for SAM
   dat <- setup.sam.data(surveys = sy,
                         residual.fleet = cn,

@@ -19,7 +19,7 @@ sam.fit_cp <-
   }
   nmissing <- sum(is.na(data$logobs))
   parameters$missing <- numeric(nmissing)
-  ran <- c("logN", "logF", "logScale", "missing")
+  ran <- c("logN", "logF", "logS", "missing")
   
   
   obj <- TMB::MakeADFun(tmball, parameters, random = ran, DLL = "stockassessment2", 
@@ -55,8 +55,8 @@ sam.fit_cp <-
     return(list(sdrep = NA, pl = parameters, plsd = NA, 
                 data = data, conf = conf, opt = NA, obj = obj))
   opt <- nlminb(obj$par, obj$fn, obj$gr, control = list(trace = 1, 
-                                                        eval.max = 2000,
-                                                        iter.max = 1000, 
+                                                        eval.max = 4000,#2000,
+                                                        iter.max = 2000,#1000, 
                                                         rel.tol = rel.tol), 
                 lower = lower2, upper = upper2)
   for (i in seq_len(newtonsteps)) {

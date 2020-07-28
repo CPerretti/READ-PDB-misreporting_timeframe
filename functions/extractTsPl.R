@@ -5,7 +5,6 @@ extractTsPl <- function(fit, simOut = NULL) {
     fit$pl <- simOut$trueParams$pl
   }
   
-  model <- deparse(substitute(fit))
   indRe <- which(names(fit$pl) %in% c("logN", "logF", "logS"))
   
   tsPl <- data.frame()

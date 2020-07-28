@@ -1,4 +1,4 @@
-calcErr <- function(fit, simOut){
+calcErrTru <- function(fit, simOut){
   # Random effects error
   errRe   <- map2_dfr(fit, simOut, calcReTsError)
   # Catch and SSB error

@@ -30,9 +30,10 @@ plotReTsAtAge <- function(fit, simOut = NULL) {
   plot(p)
   
   # Plot just the scale parameter
-  p <-
-    ggplot(dat2plot %>% filter(variable == "S"),
-           aes(x = year)) +
+  if(sum(dat2plot$variable == "S") > 0) {
+    p <-
+      ggplot(dat2plot %>% filter(variable == "S"),
+             aes(x = year)) +
       geom_line(aes(y = value, color = model)) +
       geom_point(aes(y = value, color = model)) +
       geom_hline(yintercept = 1,
@@ -47,7 +48,9 @@ plotReTsAtAge <- function(fit, simOut = NULL) {
       xlab("Year") +
       theme(legend.title = element_blank()) +
       if(!is.null(simOut)) {
-       geom_vline(xintercept = min(simOut$trueParams$conf$keyScaledYears))
+        geom_vline(xintercept = min(simOut$trueParams$conf$keyScaledYears))
       }
-  plot(p)
+    plot(p)  
+  }
+  
 }
