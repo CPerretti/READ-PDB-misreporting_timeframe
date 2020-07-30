@@ -45,8 +45,9 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, k, ...){
                                 noScaledYears = noScaledYearsFit)
   }
   
-   # x=setupNo[[1]]# << TEMP TO DEBUG
-   # out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = 3))#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
+   #x=setupMis[[1]]# << TEMP TO DEBUG
+   #x1=fitLO(x$dat, x$conf, x$par, "base_LO", k = k, silent = TRUE)
+   #out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = k))#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
   
   # Fit model
   cl <- makeCluster(detectCores() - 1) #setup nodes for parallel

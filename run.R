@@ -30,7 +30,7 @@ scenarios <- c("uniform random",
                "fixed",
                "no misreporting")
 set.seed(321)
-nRep <- 30#100#300
+nRep <- 1#100#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)
