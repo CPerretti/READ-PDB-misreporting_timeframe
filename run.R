@@ -53,6 +53,15 @@ err <- rbind(errNo, errMis)
 #### Calculate leave-out error ####
 errLO <- pmap_dfr(list(fitNoSimLOAccept, fitMisSimLOAccept, simOutAccept), calcErrTruLO)
 
+# Save sims, fits, and errors
+save(list = c("simOutAccept",
+              "fitNoSimAccept",
+              "fitMisSimAccept",
+              "sim_labelAccept",
+              "err",
+              "errLO"), 
+     file = paste0("./output/simsFitsAndErr", paste0(Sys.Date(), ".Rdata")))
+
 #### Calculate confusion table ####
 confusionTables <- calcConfusion(errMis)
 

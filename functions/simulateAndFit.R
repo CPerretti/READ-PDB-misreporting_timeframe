@@ -92,18 +92,6 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, k, ...){
   fitMisSimLOAccept <- fitMisSimLO[ind2keep2]
   sim_labelAccept   <- sim_label[ind2keep2,]
   
-  # Save fits and setups
-  suffix <- paste0(Sys.Date(), ".Rdata")
-  save(list = c("simOutAccept",
-                "setupNoAccept",
-                "setupMisAccept",
-                "fitNoSimAccept",
-                "fitMisSimAccept",
-                "fitNoSimLOAccept",
-                "fitMisSimLOAccept",
-                "sim_labelAccept"), 
-       file = paste0("./output/setupAndFits", suffix))
-  
   return(list(simOutAccept = simOutAccept, 
               setupNoAccept = setupNoAccept,
               setupMisAccept = setupMisAccept,
