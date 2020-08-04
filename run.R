@@ -36,7 +36,7 @@ sim_label <- expand.grid(replicate = 1:nRep,
                          stringsAsFactors = F)
 
 #### RUN SIMULATIONS AND FIT MODELS ####
-simsAndFits <- simulateAndFit(noScaledYearsSim, sim_label, k = 52)
+simsAndFits <- simulateAndFit(noScaledYearsSim, sim_label)
 
 simOutAccept <- simsAndFits$simOutAccept
 fitNoSimAccept <- simsAndFits$fitNoSimAccept
@@ -46,12 +46,12 @@ fitMisSimLOAccept <- simsAndFits$fitMisSimLOAccept
 sim_labelAccept <- simsAndFits$sim_labelAccept
 
 #### Calculate fit error ####
-errNo  <- calcErrTru(fitNoSimAccept,  simOutAccept)
-errMis <- calcErrTru(fitMisSimAccept, simOutAccept)
+errNo  <- calcErr(fitNoSimAccept,  simOutAccept)
+errMis <- calcErr(fitMisSimAccept, simOutAccept)
 err <- rbind(errNo, errMis)
 
 #### Calculate leave-out error ####
-errLO <- pmap_dfr(list(fitNoSimLOAccept, fitMisSimLOAccept, simOutAccept), calcErrTruLO)
+errLO <- pmap_dfr(list(fitNoSimLOAccept, fitMisSimLOAccept, simOutAccept), calcErrLO)
 
 # Save sims, fits, and errors
 save(list = c("simOutAccept",
@@ -69,6 +69,11 @@ confusionTables <- calcConfusion(errMis)
 plots(fitMisSimAccept, simOutAccept, err)
 
 ## Plot LO error comparison ##
+# Plot LOO CV error on survey observations #
+plotSurveyError(errLO,
+                scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+
+# Plot LOO CV error on unobserved variables #
 plotTsError(errLO, 
             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears, 
             scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
@@ -82,23 +87,19 @@ plotTsError(errLO,
 
 
 ## REAL DATA ANALYSIS ###############################################
-fitModelsReal(stock_dir = "GOMcod")
+
 # Load data and setup SAM model configurations
-setupNo <- setupModel(stock_dir = "GOMcod",
+setupNo <- setupModel(stock_dir = "GOMhaddock",
                       misreportingType = "no misreporting")
-setupMis <- setupModel(stock_dir = "GOMcod",
+setupMis <- setupModel(stock_dir = "GOMhaddock",
                        misreportingType = "rw",
                        noScaledYears = noScaledYearsFit)
-
-# Fit models
-
-
 
 # Haddock: Replace first zero with small value
 logobsOrig <- setupNo$dat$logobs
 setupNo$dat$logobs[which(is.na(logobsOrig))[1]] <- log(0.1)
-base <- sam.fit(setupNo$dat, setupNo$conf, setupNo$par)
 
+base <- sam.fit(setupNo$dat, setupNo$conf, setupNo$par)
 
 # Haddock: Replace first zero and turn off variability in scale
 logobsOrig <- setupMis$dat$logobs
@@ -106,14 +107,21 @@ setupMis$dat$logobs[which(is.na(logobsOrig))[1]] <- log(0.1)
 setupMis$par$logitFracMixS <- -100
 setupMis$par$itrans_rhoS <- 0
 setupMis$par$logSdLogSsta <- -10
+# Set map for haddock only
+mapMis = list("logitFracMixS" = factor(NA), "itrans_rhoS" = factor(NA), "logSdLogSsta" = factor(NA))
 
-with_misreporting <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par)#,
-                        # map = list("logitFracMixS" = factor(NA),
-                        #          "itrans_rhoS" = factor(NA),
-                        #           "logSdLogSsta" = factor(NA)))#,
-                        #             # "logS" = factor(matrix(NA, 
-                                    #                        nrow = nrow(setupMis$par$logS),
-                                    #                        ncol = ncol(setupMis$par$logS)))))
+with_misreporting <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par, map = mapMis)
+
+# Perform LOO fits
+fitNoLO <- fitLO(setupNo$dat, setupNo$conf, setupNo$par, "base_LO")
+fitMisLO <- fitLO(setupMis$dat, setupMis$conf, setupMis$par, "with_misreporting_LO", map = mapMis)
+
+
+# Calculate LOO error
+errLOReal <- calcErrLO(fitNoLO, fitMisLO, scenario = "GOM haddock", replicate = NA)
+
+# Plot LOO CV error on survey observations #
+plotSurveyError(errLOReal)
 
 
 # Plot Fit vs Observed for each model
@@ -148,38 +156,38 @@ plotReTsAtAge(with_misreporting)
 transf <- function(x) 2/(1 + exp(-2 * x)) - 1
 (ar1coef <- transf(0))
 
-# Calculate one-step-ahead psuedoresiduals
-resMisReal <- 
-  calcRes(fit = with_misreporting, sim_label = data.frame(scenario = "GOM haddock",
-                                                   replicate = 1)) %>%
-  mutate(model = "with misreporting")
-
-resNoReal <- 
-  calcRes(fit = base, sim_label = data.frame(scenario = "GOM haddock",
-                                                          replicate = 1)) %>%
-  mutate(model = "base")
-
-resReal <- rbind(resNoReal, resMisReal)
-
-# Plot residual error
-plotRes(resReal, simOutAccept, noScaledYearsFit)
-
-# resMisReal2 <- stockassessment2:::residuals.sam(fitMisReal)
-# resNoReal2 <- stockassessment2:::residuals.sam(fitNoReal_missing) 
+# # Calculate one-step-ahead psuedoresiduals
+# resMisReal <- 
+#   calcRes(fit = with_misreporting, sim_label = data.frame(scenario = "GOM haddock",
+#                                                    replicate = 1)) %>%
+#   mutate(model = "with misreporting")
 # 
-# plot(resMisReal2)
-# plot(resNoReal2)
-
-retroNo <- stockassessment::retro(base, year = 7)
-
-
-retroMis <- retro_cp(with_misreporting, year = 7)#, map = list("logitFracMixS" = factor(NA),
-                                                  #  "itrans_rhoS" = factor(NA),
-                                                   # "logSdLogSsta" = factor(NA)))
-plot(retroMis)
-plot(retroNo)
-
-mohn(retroMis)
-mohn(retroNo)
+# resNoReal <- 
+#   calcRes(fit = base, sim_label = data.frame(scenario = "GOM haddock",
+#                                                           replicate = 1)) %>%
+#   mutate(model = "base")
+# 
+# resReal <- rbind(resNoReal, resMisReal)
+# 
+# # Plot residual error
+# plotRes(resReal, simOutAccept, noScaledYearsFit)
+# 
+# # resMisReal2 <- stockassessment2:::residuals.sam(fitMisReal)
+# # resNoReal2 <- stockassessment2:::residuals.sam(fitNoReal_missing) 
+# # 
+# # plot(resMisReal2)
+# # plot(resNoReal2)
+# 
+# retroNo <- stockassessment::retro(base, year = 7)
+# 
+# 
+# retroMis <- retro_cp(with_misreporting, year = 7)#, map = list("logitFracMixS" = factor(NA),
+#                                                   #  "itrans_rhoS" = factor(NA),
+#                                                    # "logSdLogSsta" = factor(NA)))
+# plot(retroMis)
+# plot(retroNo)
+# 
+# mohn(retroMis)
+# mohn(retroNo)
 
 

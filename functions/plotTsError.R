@@ -29,7 +29,7 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim) {
     ylab("Mean absolute percent error") +
     scale_color_manual(values = colors2use) +
     scale_fill_manual(values = colors2use) +
-    ggtitle("Estimation error")  +
+    ggtitle("Estimation error in leave-out year")  +
     theme(axis.title   = element_text(size = 14),
           plot.title   = element_text(size = 16),
           strip.text   = element_text(size = 9))

@@ -1,4 +1,4 @@
-simulateAndFit <- function(noScaledYearsSim, sim_label, k, ...){
+simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
   # Load NScod example to configure simulations
   load("./wg_MGWG/state-space/simData/fitNScod.Rdata")
   
@@ -58,8 +58,8 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, k, ...){
   fitNoSim <- parLapply(cl, setupNo, function(x){try(fit(x$dat, x$conf, x$par, "base"))})
   fitMisSim <- parLapply(cl, setupMis, function(x){try(fit(x$dat, x$conf, x$par, "with_misreporting"))})
   
-  fitNoSimLO <- parLapply(cl, setupNo, function(x){try(fitLO(x$dat, x$conf, x$par, "base_LO", k))})
-  fitMisSimLO <- parLapply(cl, setupMis, function(x){try(fitLO(x$dat, x$conf, x$par, "with_misreporting_LO", k))})
+  fitNoSimLO <- parLapply(cl, setupNo, function(x){try(fitLO(x$dat, x$conf, x$par, "base_LO"))})
+  fitMisSimLO <- parLapply(cl, setupMis, function(x){try(fitLO(x$dat, x$conf, x$par, "with_misreporting_LO"))})
   
   stopCluster(cl) #shut down nodes
   

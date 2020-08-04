@@ -1,6 +1,7 @@
-fitLO <- function(dat, conf, par, model, k, ...) {
+fitLO <- function(dat, conf, par, model, ...) {
   # k-fold cross-validation on survey data
   surveyYears <- unique(dat$aux[,"year"][dat$aux[,"fleet"] %in% c((1:dat$noFleets)[dat$fleetTypes == 2])])
+  k = length(surveyYears) # THIS IS FOR LOO CV, REMOVE IF YOU WANT k-fold
   leaveOutYears <- split(surveyYears, cut(seq_along(surveyYears), k, labels = FALSE)) 
   fitLO <- list()
   for (i in 1:length(leaveOutYears)) {
