@@ -67,5 +67,7 @@ calcCSSBError <- function(fitSim, simOut) {
       mutate(leaveOutYears = as.character(list(fitSim[["leaveOutYears"]])))
   }
   
+  errCSSB$fleet <- NA
+  
   return(errCSSB)
 }

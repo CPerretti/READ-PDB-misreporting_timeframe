@@ -45,15 +45,14 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
            conf$keyVarS <- conf$keyVarF #linking of scale variances
            conf$keyScaledYears <- (max(dat$years) - noScaledYears + 1):max(dat$years)
            conf$corFlagS <- 2 #type of misreporting correlation among ages
-           #conf$fracMixS <- 0.5#conf$fracMixF #fraction of mixed model
+           conf$fracMixS <- 0
               },
          fixed = {
            conf$noScaledYears  <- noScaledYears
            conf$keyLogScale    <- keyLogScale
            conf$keyScaledYears <- (max(dat$years) - noScaledYears + 1):max(dat$years)
-           conf$keyParScaledYA <- matrix(data = #rep(c(0), 
-                                                 #each = noScaledYears * ncol(dat$propF)),
-                                           0:(noScaledYears * ncol(dat$propF) - 1),
+           conf$keyParScaledYA <- matrix(data = rep(c(0), 
+                                                 each = noScaledYears * ncol(dat$propF)),
                                          nrow = noScaledYears)
            conf$constRecBreaks <- numeric(0)
          },

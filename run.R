@@ -30,7 +30,7 @@ scenarios <- c("uniform random",
                "fixed",
                "no misreporting")
 set.seed(321)
-nRep <- 1#100#300
+nRep <- 50#100#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)
@@ -43,6 +43,8 @@ fitNoSimAccept <- simsAndFits$fitNoSimAccept
 fitMisSimAccept <- simsAndFits$fitMisSimAccept
 fitNoSimLOAccept <- simsAndFits$fitNoSimLOAccept
 fitMisSimLOAccept <- simsAndFits$fitMisSimLOAccept
+setupNoAccept <- simsAndFits$setupNoAccept
+setupMisAccept <- simsAndFits$setupMisAccept
 sim_labelAccept <- simsAndFits$sim_labelAccept
 
 #### Calculate fit error ####
@@ -51,12 +53,15 @@ errMis <- calcErr(fitMisSimAccept, simOutAccept)
 err <- rbind(errNo, errMis)
 
 #### Calculate leave-out error ####
-errLO <- pmap_dfr(list(fitNoSimLOAccept, fitMisSimLOAccept, simOutAccept), calcErrLO)
+errLO <- pmap_dfr(list(fitNoSimLOAccept, fitMisSimLOAccept, 
+                       simOut = simOutAccept, setup = setupNoAccept), calcErrLO)
 
 # Save sims, fits, and errors
 save(list = c("simOutAccept",
               "fitNoSimAccept",
               "fitMisSimAccept",
+              "fitNoSimLOAccept",
+              "fitMisSimLOAccept",
               "sim_labelAccept",
               "err",
               "errLO"), 
@@ -66,18 +71,36 @@ save(list = c("simOutAccept",
 confusionTables <- calcConfusion(errMis)
 
 ## Make plots ##
-plots(fitMisSimAccept, simOutAccept, err)
+#plots(fitMisSimAccept, simOutAccept, err, type = "fit")
+
+# Plot mean fit vs mean true for each scenario
+plotMeanFitVTru(errLO, simOutAccept[[1]])
+
+# Plot an example random effects at age
+plotReTsAtAge(fitMisSimAccept[[1]], simOutAccept[[1]])
+
+# Plot time series fit error
+plotTsError(err,
+            type = "Not LO",
+            scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears, 
+            scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+            plotScale = F)
 
 ## Plot LO error comparison ##
 # Plot LOO CV error on survey observations #
 plotSurveyError(errLO,
+                type = "LO",
                 scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
 
 # Plot LOO CV error on unobserved variables #
-plotTsError(errLO, 
+plotTsError(errLO,
+            type = "LO",
             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears, 
-            scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+            scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+            plotScale = F)
 
+# Plot mean fit vs tru for LOO prediction
+plotMeanFitVTru(errLO, simOutAccept[[1]])
 
 ## Calculate one-step-ahead residuals ##
 #res <- calcResAll(fitNo = fitNoSimAccept, fitMis = fitMisSimAccept, sim_labelAccept)
@@ -89,9 +112,9 @@ plotTsError(errLO,
 ## REAL DATA ANALYSIS ###############################################
 
 # Load data and setup SAM model configurations
-setupNo <- setupModel(stock_dir = "GOMhaddock",
+setupNo <- setupModel(stock_dir = "GOMcod",
                       misreportingType = "no misreporting")
-setupMis <- setupModel(stock_dir = "GOMhaddock",
+setupMis <- setupModel(stock_dir = "GOMcod",
                        misreportingType = "rw",
                        noScaledYears = noScaledYearsFit)
 
@@ -110,18 +133,22 @@ setupMis$par$logSdLogSsta <- -10
 # Set map for haddock only
 mapMis = list("logitFracMixS" = factor(NA), "itrans_rhoS" = factor(NA), "logSdLogSsta" = factor(NA))
 
-with_misreporting <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par, map = mapMis)
+#setupMisHalf <- setupMis
+#setupMisHalf$dat$logobs[setupMisHalf$dat$aux[,"fleet"]]
+
+with_misreporting <- sam.fit_cp(setupMis$dat, setupMis$conf, setupMis$par)#, map = mapMis)
+
 
 # Perform LOO fits
 fitNoLO <- fitLO(setupNo$dat, setupNo$conf, setupNo$par, "base_LO")
-fitMisLO <- fitLO(setupMis$dat, setupMis$conf, setupMis$par, "with_misreporting_LO", map = mapMis)
+fitMisLO <- fitLO(setupMis$dat, setupMis$conf, setupMis$par, "with_misreporting_LO")#, map = mapMis)
 
 
 # Calculate LOO error
-errLOReal <- calcErrLO(fitNoLO, fitMisLO, scenario = "GOM haddock", replicate = NA)
+errLOReal <- calcErrLO(fitNo = fitNoLO, fitMis = fitMisLO, setup = setupNo, scenario = "GOM cod", replicate = NA)
 
 # Plot LOO CV error on survey observations #
-plotSurveyError(errLOReal)
+plotSurveyError(errLOReal, type = "LO")
 
 
 # Plot Fit vs Observed for each model

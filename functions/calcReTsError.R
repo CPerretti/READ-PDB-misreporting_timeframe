@@ -26,5 +26,7 @@ calcReTsError <- function(fitSim, simOut) {
       mutate(leaveOutYears = as.character(list(fitSim[["leaveOutYears"]])))
   }
   
+  errRe$fleet <- NA
+  
   return(errRe)
   }

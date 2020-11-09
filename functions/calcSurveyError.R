@@ -1,4 +1,4 @@
-calcSurveyError <- function(fitSim, simOut = NULL, scenario = NULL, replicate = NULL) {
+calcSurveyError <- function(fitSim, simOut, setup, scenario = NULL, replicate = NULL) {
   
   if (!is.null(simOut)) {
     scenario <- simOut$sim_label$scenario
@@ -8,11 +8,12 @@ calcSurveyError <- function(fitSim, simOut = NULL, scenario = NULL, replicate = 
   
   errSurvey <- 
     data.frame(fitSim$data$aux,
-               tru = fitSim$data$logobs %>% exp, # says tru but actually is obs
+               tru = setup$dat$logobs %>% exp, # says tru but actually is obs
                fit = fitSim$rep$predObs %>% exp,
                sdLog = NA) %>%
-    filter(fleet == 1) %>%
-    select(-fleet) %>%
+    # only calculate error on survey fleets
+    filter(fleet %in% (1:fitSim$data$noFleets)[fitSim$data$fleetTypes == 2]) %>%
+    #select(-fleet) %>%
     mutate(error = fit - tru,
            abs_error = abs(error),
            error_pc = 100 * (fit - tru) / tru,

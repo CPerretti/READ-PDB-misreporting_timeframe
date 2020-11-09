@@ -1,4 +1,4 @@
-calcErrLO<- function(fitNo, fitMis, simOut = NULL, scenario = NULL, replicate = NULL){
+calcErrLO<- function(fitNo, fitMis, setup, simOut = NULL, scenario = NULL, replicate = NULL){
 
   # Only include leave-out predictions where both models converged
   # exclude fit fails
@@ -7,9 +7,9 @@ calcErrLO<- function(fitNo, fitMis, simOut = NULL, scenario = NULL, replicate = 
   
   # exclude non-convergences
   ind2keep1 <- ind2keep0[unlist(sapply(fitNo$fits[ind2keep0], 
-                                       function (x) x[[6]][3])) != 1 #&
-                           #unlist(sapply(fitMis$fits[ind2keep0], 
-                          #               function (x) x[[6]][3])) != 1
+                                       function (x) x[[6]][3])) != 1 &
+                           unlist(sapply(fitMis$fits[ind2keep0], 
+                                        function (x) x[[6]][3])) != 1
                          ]
   # exclude unrealistic fits that would be exluded by an analyst
   if (!is.null(simOut)) {
@@ -41,8 +41,16 @@ calcErrLO<- function(fitNo, fitMis, simOut = NULL, scenario = NULL, replicate = 
   
   
   
-  errNoSurvey <- map2_dfr(fitNoAccept$fits, rep(list(simOut), length(ind2keep2)), calcSurveyError, scenario, replicate)
-  errMisSurvey <- map2_dfr(fitMisAccept$fits, rep(list(simOut), length(ind2keep2)), calcSurveyError, scenario, replicate)
+  errNoSurvey <- pmap_dfr(.l = list(fitNoAccept$fits, 
+                                    rep(list(simOut), length(ind2keep2)), 
+                                    rep(list(setup), length(ind2keep2))),
+                            .f = calcSurveyError, 
+                          scenario = scenario, replicate = replicate)
+  errMisSurvey <- pmap_dfr(.l = list(fitMisAccept$fits, 
+                                     rep(list(simOut), length(ind2keep2)), 
+                                     rep(list(setup), length(ind2keep2))),
+                           .f = calcSurveyError, 
+                           scenario = scenario, replicate = replicate)
   
   err0 <- rbind(errNoSurvey, errMisSurvey)
   
