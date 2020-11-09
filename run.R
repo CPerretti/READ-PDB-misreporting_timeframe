@@ -29,7 +29,8 @@ scenarios <- c("uniform random",
                "rw",
                "fixed",
                "no misreporting")
-set.seed(321)
+seed <- sample(1:1000, 1)
+set.seed(seed)
 nRep <- 50#100#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
@@ -57,7 +58,8 @@ errLO <- pmap_dfr(list(fitNoSimLOAccept, fitMisSimLOAccept,
                        simOut = simOutAccept, setup = setupNoAccept), calcErrLO)
 
 # Save sims, fits, and errors
-save(list = c("simOutAccept",
+save(list = c("seed",
+              "simOutAccept",
               "fitNoSimAccept",
               "fitMisSimAccept",
               "fitNoSimLOAccept",
