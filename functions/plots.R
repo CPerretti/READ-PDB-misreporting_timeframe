@@ -1,4 +1,4 @@
-plots <- function(fit, simOut, err, type) {
+plots <- function(fit, simOut, err, type, plotScale) {
   # Plot an example random effects at age
   plotReTsAtAge(fit[[1]], simOut[[1]])
   
@@ -6,7 +6,8 @@ plots <- function(fit, simOut, err, type) {
   plotTsError(err,
               type = type,
               scaled_yearsFit = fit[[1]]$conf$keyScaledYears, 
-              scaled_yearsSim = simOut[[1]]$scaled_yearsSim)
+              scaled_yearsSim = simOut[[1]]$scaled_yearsSim,
+              plotScale = plotScale)
   
   # Plot mean fit vs mean true for each scenario
   #plotMeanFitVTru(err, simOut[[1]])

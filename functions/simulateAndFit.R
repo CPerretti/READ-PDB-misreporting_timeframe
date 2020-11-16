@@ -47,7 +47,7 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
   
    #x=setupMis[[1]]# << TEMP TO DEBUG
    #x1 = fit(x$dat, x$conf, x$par, "with_misreporting")
-   #x1=fitLO(x$dat, x$conf, x$par, "base_LO", k = k, silent = TRUE)
+   #x1=fitLO(x$dat, x$conf, x$par, "with_misreporting", k = 2, silent = TRUE)
    #out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = k))#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
   
   # Fit model

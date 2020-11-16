@@ -31,7 +31,7 @@ scenarios <- c("uniform random",
                "no misreporting")
 seed <- sample(1:1000, 1)
 set.seed(seed)
-nRep <- 50#300
+nRep <- 1#50#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)
@@ -73,10 +73,10 @@ save(list = c("seed",
 # confusionTables <- calcConfusion(errMis)
 
 ## Make plots ##
-#plots(fitMisSimAccept, simOutAccept, err, type = "fit")
+#plots(fitMisSimAccept, simOutAccept, err, type = "fit", plotScale = F)
 
 # Plot mean fit vs mean true for each scenario
-# plotMeanFitVTru(errLO, simOutAccept[[1]])
+#plotMeanFitVTru(errLO, simOutAccept[[1]])
 
 # Plot an example random effects at age
 # plotReTsAtAge(fitMisSimAccept[[1]], simOutAccept[[1]])
@@ -97,7 +97,7 @@ save(list = c("seed",
 # Plot LOO CV error on unobserved variables #
 # plotTsError(errLO,
 #             type = "LO",
-#             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears, 
+#             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears,
 #             scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
 #             plotScale = F)
 
