@@ -23,15 +23,16 @@ source("loadFunctions.R")
 ## SIMULATED DATA ANALYSIS ##########################################
 
 #### Configure simulations ####
-noScaledYearsSim <- 10
+noScaledYearsSim <- 20
 noScaledYearsFit <- 20
-scenarios <- c("uniform random", 
-               "rw",
-               "fixed",
-               "no misreporting")
+scenarios <- c(#"uniform random", 
+               #"rw",
+               #"fixed",
+               #"no misreporting",
+               "misspecified M")
 seed <- sample(1:1000, 1)
 set.seed(seed)
-nRep <- 1#50#300
+nRep <- 10#50#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)

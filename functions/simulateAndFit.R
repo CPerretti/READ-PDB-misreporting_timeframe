@@ -37,16 +37,26 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
     setupNo[[i]] <- setupModel(conf = fitNScod$conf,
                                stock_dir = "simData",
                                misreportingType = "no misreporting",
-                               noScaledYears = noScaledYearsFit) 
+                               noScaledYears = noScaledYearsFit,
+                               sim_label = sim_label[i,]) 
     
     setupMis[[i]] <- setupModel(conf = fitNScod$conf,
                                 stock_dir = "simData",
                                 misreportingType = "rw",
-                                noScaledYears = noScaledYearsFit)
+                                noScaledYears = noScaledYearsFit,
+                                sim_label = sim_label[i,])
   }
   
-   #x=setupMis[[1]]# << TEMP TO DEBUG
-   #x1 = fit(x$dat, x$conf, x$par, "with_misreporting")
+  
+   x=setupMis[[4]]# << TEMP TO DEBUG
+   x$par$itrans_rhoS <- 0
+   x1 = fit(x$dat, x$conf, x$par, "with_misreporting", map = list(itrans_rhoS = factor(NA)))
+   # See if M is misinterpreted as misreporting
+   x1$sdrep
+   simOut[[1]]$trueParams$pl$logS %>% exp()
+   x1$pl$logS %>% exp()
+   plotReTsAtAge(x1, simOut[[1]])
+    
    #x1=fitLO(x$dat, x$conf, x$par, "with_misreporting", k = 2, silent = TRUE)
    #out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = k))#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
   

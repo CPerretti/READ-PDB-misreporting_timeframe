@@ -1,6 +1,6 @@
 # Setup data and params for sam model #####################
 setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
-                       noScaledYears = NULL) {
+                       noScaledYears = NULL, sim_label) {
   
   path_root <- paste0("./wg_MGWG/state-space/", stock_dir, "/")
   
@@ -19,6 +19,7 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
   
   
   cn[which(cn== 0)] <- -1
+  
   # setup the data as needed for SAM
   dat <- setup.sam.data(surveys = sy,
                         residual.fleet = cn,

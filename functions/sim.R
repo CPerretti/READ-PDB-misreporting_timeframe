@@ -46,6 +46,9 @@ sim <- function(fit, noScaledYears, sim_label,
          },
          `no misreporting` = {
            logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYears)
+         },
+         `misspecified M` = { # misspecified M assumes no misreporting
+           logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYears)
          }
   ) 
   
@@ -82,7 +85,13 @@ sim <- function(fit, noScaledYears, sim_label,
   f <- exp(logF)
   
   # Set M
+  if (sim_label$scenario == "misspecified M") {
+    fit$data$natMor[(nrow(fit$data$natMor)-20+1):nrow(fit$data$natMor),] <- 
+      2*fit$data$natMor[(nrow(fit$data$natMor)-20+1):nrow(fit$data$natMor),]
+  }
   m <- t(fit$data$natMor)
+  
+
   
   # Calcuate total mortality
   z <- f + m
