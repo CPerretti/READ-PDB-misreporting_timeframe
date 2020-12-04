@@ -86,8 +86,8 @@ sim <- function(fit, noScaledYears, sim_label,
   
   # Set M
   if (sim_label$scenario == "misspecified M") {
-    fit$data$natMor[(nrow(fit$data$natMor)-20+1):nrow(fit$data$natMor),] <- 
-      2*fit$data$natMor[(nrow(fit$data$natMor)-20+1):nrow(fit$data$natMor),]
+    fit$data$natMor[(nrow(fit$data$natMor)-10+1):nrow(fit$data$natMor),] <- 
+      2*fit$data$natMor[(nrow(fit$data$natMor)-10+1):nrow(fit$data$natMor),]
   }
   m <- t(fit$data$natMor)
   

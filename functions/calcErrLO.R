@@ -84,7 +84,8 @@ calcErrLO<- function(fitNo, fitMis, setup, simOut = NULL, scenario = NULL, repli
            scenario  = factor(scenario, levels = c("no misreporting scenario",
                                                    "fixed scenario",
                                                    "random walk scenario",
-                                                   "uniform random scenario")))
+                                                   "uniform random scenario",
+                                                   "misspecified M scenario")))
   }
   
   return(err)

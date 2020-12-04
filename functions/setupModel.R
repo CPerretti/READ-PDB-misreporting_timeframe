@@ -62,6 +62,10 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
          }
   )
   
+  # Turn off estimation of correlated misreporting when misreporting is not random walk.
+  # This is because estimating correlation often results in numerical problems which would 
+  # cause it being turned off in practice.
+  if (sim_label != "rw" & misreportingType == "rw") conf$corFlagS <- 0
   
   if (misreportingType == "rw") {
     par <- stockassessment2::defpar(dat, conf)

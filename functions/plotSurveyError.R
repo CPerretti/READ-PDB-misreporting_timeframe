@@ -48,8 +48,9 @@ plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
       geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
                                                 "fixed scenario", 
                                                 "random walk scenario",
-                                                "uniform random scenario"),
-                                   xint = c(NA, rep(min(scaled_yearsSim), 3))),
+                                                "uniform random scenario",
+                                                "misspecified M"),
+                                   xint = c(NA, rep(min(scaled_yearsSim), 3), NA)),
                  aes(xintercept = xint))  
     }
     

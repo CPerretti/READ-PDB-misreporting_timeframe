@@ -47,17 +47,32 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
                                 sim_label = sim_label[i,])
   }
   
-  
-   x=setupMis[[4]]# << TEMP TO DEBUG
-   x$par$itrans_rhoS <- 0
-   x1 = fit(x$dat, x$conf, x$par, "with_misreporting", map = list(itrans_rhoS = factor(NA)))
+   
+    #ind = 3
+    #setupMis[[ind]]$par$itrans_rhoS <- 0
+    #fit_mis = fit(setupMis[[ind]]$dat, setupMis[[ind]]$conf, setupMis[[ind]]$par, "with_misreporting")#, map = list(itrans_rhoS = factor(NA)))
+    #fit_bas = fit(setupNo[[ind]]$dat, setupNo[[ind]]$conf, setupNo[[ind]]$par, "base")
+   #x=setupNo[[ind]]# << TEMP TO DEBUG
+   #x1 = fit(x$dat, x$conf, x$par, "base")
    # See if M is misinterpreted as misreporting
-   x1$sdrep
-   simOut[[1]]$trueParams$pl$logS %>% exp()
-   x1$pl$logS %>% exp()
-   plotReTsAtAge(x1, simOut[[1]])
-    
-   #x1=fitLO(x$dat, x$conf, x$par, "with_misreporting", k = 2, silent = TRUE)
+   #fit_mis$sdrep
+   #fit_bas$sdrep
+   # #simOut[[1]]$trueParams$pl$logS %>% exp()
+   # #x1$pl$logS %>% exp()
+   # plotReTsAtAge(fit_mis, simOut[[ind]])
+   # plotReTsAtAge(fit_bas, simOut[[ind]])
+   # fitVsObsBase <- extractFitVsObs(fit = fit_mis, model = "with_misreporting")
+   # plotFitVsObs(fitVsObsBase)
+   # 
+   # AIC(fit_mis)
+   # AIC(fit_bas)
+   #  
+   # plot(residuals(fit_bas))
+   # plot(stockassessment2:::residuals.sam(fit_mis))
+   # 
+   # plot(procres(fit_bas))
+   # plot(stockassessment2::procres(fit_mis))
+   
    #out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = k))#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
   
   # Fit model

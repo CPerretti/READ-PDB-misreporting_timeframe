@@ -32,7 +32,7 @@ scenarios <- c(#"uniform random",
                "misspecified M")
 seed <- sample(1:1000, 1)
 set.seed(seed)
-nRep <- 10#50#300
+nRep <- 50#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)
@@ -67,7 +67,7 @@ save(list = c("seed",
               "fitMisSimLOAccept",
               "sim_labelAccept",
               "err",
-              "errLO"), 
+              "errLO"),
      file = paste0("./output/simsFitsAndErr", paste0(Sys.Date(), ".Rdata")))
 
 #### Calculate confusion table ####
@@ -91,9 +91,9 @@ save(list = c("seed",
 
 ## Plot LO error comparison ##
 # Plot LOO CV error on survey observations #
-# plotSurveyError(errLO,
-#                 type = "LO",
-#                 scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+plotSurveyError(errLO,
+                type = "LO",
+                scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
 
 # Plot LOO CV error on unobserved variables #
 # plotTsError(errLO,

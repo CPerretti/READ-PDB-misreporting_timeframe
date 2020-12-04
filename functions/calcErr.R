@@ -19,7 +19,8 @@ calcErr <- function(fit, simOut){
            scenario  = factor(scenario, levels = c("no misreporting scenario",
                                                    "fixed scenario",
                                                    "random walk scenario",
-                                                   "uniform random scenario")))
+                                                   "uniform random scenario",
+                                                   "misspecified M scenario")))
   
   return(err)
 }
