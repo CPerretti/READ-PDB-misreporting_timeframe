@@ -45,8 +45,12 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
            conf$keyLogScale <- keyLogScale
            conf$keyVarS <- conf$keyVarF #linking of scale variances
            conf$keyScaledYears <- (max(dat$years) - noScaledYears + 1):max(dat$years)
-           conf$corFlagS <- 2 #type of misreporting correlation among ages
            conf$fracMixS <- 0
+           conf$corFlagS <- 2 #type of misreporting correlation among ages
+           # Turn off estimation of correlated misreporting when misreporting is not random walk.
+           # This is because estimating correlation in other scenarios often results
+           # in numerical problems which would cause it being turned off in practice.
+           if (sim_label$scenario != "rw") conf$corFlagS <- 0
               },
          fixed = {
            conf$noScaledYears  <- noScaledYears
@@ -62,10 +66,7 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
          }
   )
   
-  # Turn off estimation of correlated misreporting when misreporting is not random walk.
-  # This is because estimating correlation often results in numerical problems which would 
-  # cause it being turned off in practice.
-  if (sim_label != "rw" & misreportingType == "rw") conf$corFlagS <- 0
+
   
   if (misreportingType == "rw") {
     par <- stockassessment2::defpar(dat, conf)

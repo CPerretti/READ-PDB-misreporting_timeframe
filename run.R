@@ -33,7 +33,7 @@ scenarios <- c(#"uniform random",
   )
 seed <- sample(1:1000, 1)
 set.seed(seed)
-nRep <- 50#300
+nRep <- 10#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios, 
                          stringsAsFactors = F)

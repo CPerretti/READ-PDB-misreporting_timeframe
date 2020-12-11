@@ -27,20 +27,21 @@ sim <- function(fit, noScaledYears, sim_label,
            # errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
            #                nrow = nAs, ncol = noScaledYears) #uncorrelated error
            
+           # Setup correlation matrix for correlated error 
            scor = matrix(NA, nrow = nAs, ncol = nAs)
            diag(scor) <- 1
+           rho <- 0.5
            for(i in 1:nAs){
              for(j in 1:i){
-               scor[i,j] <- 0.8^abs(i-j)
+               scor[i,j] <- rho^abs(i-j)
                scor[j,i] <- scor[i,j]
              }
            } 
            
            svar <- exp(logSdLogScale)^2 * scor
         
-           errS <- matrix(data = MASS::mvrnorm(n = nAs*10000, mu = rep(0, nAs), Sigma = svar),
-                          nrow = nAs, ncol = 10000) #correlated error
-           cor(t(errS)) #<< FIGURE OUT WHY THIS IS WRONG <<
+           errS <- matrix(data = MASS::mvrnorm(n = noScaledYears, mu = rep(0, nAs), Sigma = svar),
+                          ncol = nAs) %>% t() # correlated error
            
            rw_logS_mat[,1] <- mu_c + errS[,1]
            for(i in 2:noScaledYears){

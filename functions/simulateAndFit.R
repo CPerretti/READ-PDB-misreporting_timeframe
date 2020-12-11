@@ -48,7 +48,8 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
   }
   
    
-    #ind = 3
+    # Debugging code:  
+    #ind = 1
     #setupMis[[ind]]$par$itrans_rhoS <- 0
     #fit_mis = fit(setupMis[[ind]]$dat, setupMis[[ind]]$conf, setupMis[[ind]]$par, "with_misreporting")#, map = list(itrans_rhoS = factor(NA)))
     #fit_bas = fit(setupNo[[ind]]$dat, setupNo[[ind]]$conf, setupNo[[ind]]$par, "base")
@@ -56,10 +57,12 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
    #x1 = fit(x$dat, x$conf, x$par, "base")
    # See if M is misinterpreted as misreporting
    #fit_mis$sdrep
+   #trans <- function(x) 2/(1 + exp(-2 * x)) - 1
+   #trans(fit_mis$sdrep$par.fixed["itrans_rhoS"])
    #fit_bas$sdrep
    # #simOut[[1]]$trueParams$pl$logS %>% exp()
    # #x1$pl$logS %>% exp()
-   # plotReTsAtAge(fit_mis, simOut[[ind]])
+   #plotReTsAtAge(fit_mis, simOut[[ind]])
    # plotReTsAtAge(fit_bas, simOut[[ind]])
    # fitVsObsBase <- extractFitVsObs(fit = fit_mis, model = "with_misreporting")
    # plotFitVsObs(fitVsObsBase)
@@ -72,8 +75,8 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
    # 
    # plot(procres(fit_bas))
    # plot(stockassessment2::procres(fit_mis))
-   
-   #out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = k))#, map = list(logitFracMixS = factor(NA)))# << TEMP TO DEBUG
+   #
+   #out=try(fitLO(x$dat, x$conf, x$par, "base_LO", k = k))#, map = list(logitFracMixS = factor(NA)))
   
   # Fit model
   cl <- makeCluster(detectCores() - 1) #setup nodes for parallel
