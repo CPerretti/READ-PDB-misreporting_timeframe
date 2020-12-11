@@ -92,4 +92,14 @@ plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
   
   print(p)
   
+  
+  # t-test p-values
+  err2test <- err %>% 
+      dplyr::filter(variable %in% c("Survey")) %>%
+      select(scenario, replicate, model, fleet, year, age, abs_error_pc) %>%
+      spread(model, abs_error_pc) %>%
+      group_by(scenario, replicate, age) %>%
+      summarise(pval = t.test(base_LO, with_misreporting_LO, paired = TRUE)$p.value,
+                est  = t.test(base_LO, with_misreporting_LO, paired = TRUE)$estimate)
+  
 }

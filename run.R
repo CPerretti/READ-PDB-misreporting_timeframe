@@ -26,10 +26,11 @@ source("loadFunctions.R")
 noScaledYearsSim <- 20
 noScaledYearsFit <- 20
 scenarios <- c(#"uniform random", 
-               #"rw",
+               "rw"#,
                #"fixed",
                #"no misreporting",
-               "misspecified M")
+               #"misspecified M"
+  )
 seed <- sample(1:1000, 1)
 set.seed(seed)
 nRep <- 50#300
@@ -85,15 +86,15 @@ save(list = c("seed",
 # Plot time series fit error
 # plotTsError(err,
 #             type = "Not LO",
-#             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears, 
+#             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears,
 #             scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
 #             plotScale = F)
 
 ## Plot LO error comparison ##
 # Plot LOO CV error on survey observations #
-plotSurveyError(errLO,
-                type = "LO",
-                scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+# plotSurveyError(errLO,
+#                 type = "LO",
+#                 scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
 
 # Plot LOO CV error on unobserved variables #
 # plotTsError(errLO,

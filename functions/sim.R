@@ -21,11 +21,26 @@ sim <- function(fit, noScaledYears, sim_label,
            # logS <- matrix(data = log(rnorm(nAs * noScaledYears, 8, 2)),
            #                    nrow = nAs, ncol = noScaledYears)
          },
-         `rw` = { # RW
+         `rw` = { # correlated RW
            logSdLogScale <- log(sd_c)
            rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYears)
-           errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
-                          nrow = nAs, ncol = noScaledYears) #uncorrelated error
+           # errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
+           #                nrow = nAs, ncol = noScaledYears) #uncorrelated error
+           
+           scor = matrix(NA, nrow = nAs, ncol = nAs)
+           diag(scor) <- 1
+           for(i in 1:nAs){
+             for(j in 1:i){
+               scor[i,j] <- 0.8^abs(i-j)
+               scor[j,i] <- scor[i,j]
+             }
+           } 
+           
+           svar <- exp(logSdLogScale)^2 * scor
+        
+           errS <- matrix(data = MASS::mvrnorm(n = nAs*10000, mu = rep(0, nAs), Sigma = svar),
+                          nrow = nAs, ncol = 10000) #correlated error
+           cor(t(errS)) #<< FIGURE OUT WHY THIS IS WRONG <<
            
            rw_logS_mat[,1] <- mu_c + errS[,1]
            for(i in 2:noScaledYears){
@@ -84,7 +99,7 @@ sim <- function(fit, noScaledYears, sim_label,
   
   f <- exp(logF)
   
-  # Set M
+  # Change M if doing misspecified M scenario
   if (sim_label$scenario == "misspecified M") {
     fit$data$natMor[(nrow(fit$data$natMor)-10+1):nrow(fit$data$natMor),] <- 
       2*fit$data$natMor[(nrow(fit$data$natMor)-10+1):nrow(fit$data$natMor),]
