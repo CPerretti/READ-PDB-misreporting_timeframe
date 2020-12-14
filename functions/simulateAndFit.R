@@ -1,4 +1,4 @@
-simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
+simulateAndFit <- function(sim_label, ...){
   # Load NScod example to configure simulations
   load("./wg_MGWG/state-space/simData/fitNScod.Rdata")
   
@@ -23,7 +23,6 @@ simulateAndFit <- function(noScaledYearsSim, sim_label, ...){
   for (i in 1:nrow(sim_label)) {
     simOut[[i]] <-
       sim(fit = fitNScod,
-          noScaledYears = noScaledYearsSim,
           sim_label = sim_label[i,],
           unifLower = unifLower, 
           unifUpper = unifUpper,

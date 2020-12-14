@@ -1,5 +1,5 @@
 ## Simulation model #######################################
-sim <- function(fit, noScaledYears, sim_label,
+sim <- function(fit, sim_label,
                 unifLower, unifUpper, mu_c, sd_c) {
   
   fit$conf$constRecBreaks <- numeric(0) # Needed for new SAM
@@ -9,19 +9,21 @@ sim <- function(fit, noScaledYears, sim_label,
   nA <- ncol(fit$data$propF) # number of age-classes
   nT <- fit$data$noYears # length of time series
   
+  # Set noScaledYears according to scenario
+  ifelse(sim_label$scenario == "rw10", noScaledYears <- 10, noScaledYears <- 20)
   
   # Setup keyLogScale to have unique logScale for each age that is fished
   nAs <- sum(keyLogScale[1,] > -1)
   
-  switch(sim_label$scenario,
-         `uniform random` = {
+  if(sim_label$scenario == "uniform random") {
            logS <- matrix(data = log(runif(nAs * noScaledYears, 
                                            unifLower, unifUpper)),
                               nrow = nAs, ncol = noScaledYears)
            # logS <- matrix(data = log(rnorm(nAs * noScaledYears, 8, 2)),
            #                    nrow = nAs, ncol = noScaledYears)
-         },
-         `rw` = { # correlated RW
+  }
+  
+  if(sim_label$scenario %in% c("rw","rw20")) { # correlated RW
            logSdLogScale <- log(sd_c)
            rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYears)
            # errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
@@ -49,24 +51,22 @@ sim <- function(fit, noScaledYears, sim_label,
            }
            
            logS <- matrix(data = rw_logS_mat, nrow = nAs, ncol = noScaledYears)
-         },
-         fixed = { 
-           # Misreporting on all ages
-           logS <- matrix(data = rep(log(runif(1, unifLower, unifUpper)),
-                                         times = nAs * noScaledYears),
-                              nrow = nAs, ncol = noScaledYears)
-           # Misreporting only on ages 1-3
-           # logS <- matrix(data = rep(c(log(runif(1, 1.5, 10)), 0), 
-           #                               each = nAs * noScaledYears / 2),
-           #                    nrow = nAs, ncol = noScaledYears, byrow = T)
-         },
-         `no misreporting` = {
-           logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYears)
-         },
-         `misspecified M` = { # misspecified M assumes no misreporting
-           logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYears)
-         }
-  ) 
+  }
+  
+  if(sim_label$scenario == "fixed") {
+             # Misreporting on all ages
+             logS <- matrix(data = rep(log(runif(1, unifLower, unifUpper)),
+                                           times = nAs * noScaledYears),
+                                nrow = nAs, ncol = noScaledYears)
+             # Misreporting only on ages 1-3
+             # logS <- matrix(data = rep(c(log(runif(1, 1.5, 10)), 0), 
+             #                               each = nAs * noScaledYears / 2),
+             #                    nrow = nAs, ncol = noScaledYears, byrow = T)
+  }
+  
+  if(sim_label$scenario %in% c("no misreporting", "misspecified M")) {
+    logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYears)
+  }
   
   # Set F (need to replicate some elements to match ModelConf)
   #f <- exp(fit$pl$logF[(fit$conf$keyLogFsta[1,] + 1),])
