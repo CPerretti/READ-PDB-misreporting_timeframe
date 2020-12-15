@@ -23,7 +23,7 @@ sim <- function(fit, sim_label,
            #                    nrow = nAs, ncol = noScaledYears)
   }
   
-  if(sim_label$scenario %in% c("rw","rw20")) { # correlated RW
+  if(sim_label$scenario %in% c("rw","rw10")) { # correlated RW
            logSdLogScale <- log(sd_c)
            rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYears)
            # errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),

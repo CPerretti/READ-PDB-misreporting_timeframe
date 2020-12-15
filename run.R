@@ -26,15 +26,15 @@ source("loadFunctions.R")
 noScaledYearsSim <- 20
 noScaledYearsFit <- 20
 scenarios <- c(#"uniform random", 
-               "rw10",
-               "rw",
+               #"rw10",
+               #"rw"#,
                #"fixed",
                #"no misreporting",
-               #"misspecified M"
+               "misspecified M"
   )
 seed <- sample(1:1000, 1)
 set.seed(seed)
-nRep <- 1#300
+nRep <- 10#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios,
                          stringsAsFactors = F)
