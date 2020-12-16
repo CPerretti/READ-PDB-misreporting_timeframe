@@ -8,29 +8,30 @@ surveyQs_No <- data.frame()
 surveyQs_No_full <- data.frame()
 for(h in 1:length(fitNoSimLOAccept)) {
   for(i in 1:length(fitNoSimLOAccept[[h]]$fits)) {
-    fit2extract <- fitNoSimLOAccept[[h]]$fits[[i]]
+    fitNo2extract <- fitNoSimLOAccept[[h]]$fits[[i]]
     
-    if (class(fit2extract) != "try-error") {
+    
+    if (class(fitNo2extract) != "try-error") {
       
       dat <- data.frame(scenario = sim_labelAccept$scenario[h],
                         rep = sim_labelAccept$replicate[h],
                         leaveOutYears = fitNoSimLOAccept[[h]]$leaveOutYears[[i]], 
-                        qtable(fit2extract)[,],
-                        survey = substr(row.names(qtable(fit2extract)[,]), 1, 11))
+                        qtable(fitNo2extract)[,],
+                        survey = substr(row.names(qtable(fitNo2extract)[,]), 1, 11))
       
       surveyQs_No <- rbind(surveyQs_No, dat)
     }
     
   }
   # Full dataset fit
-  fit2extract_full <- fitNoSimAccept[[h]]
+  fitNo2extract_full <- fitNoSimAccept[[h]]
   
-  if (class(fit2extract_full) != "try-error") {
+  if (class(fitNo2extract_full) != "try-error") {
     
     dat_full <- data.frame(scenario = sim_labelAccept$scenario[h],
                            rep = sim_labelAccept$replicate[h],
-                           qtable(fit2extract_full)[,],
-                           survey = substr(row.names(qtable(fit2extract_full)[,]), 1, 11))
+                           qtable(fitNo2extract_full)[,],
+                           survey = substr(row.names(qtable(fitNo2extract_full)[,]), 1, 11))
     
     surveyQs_No_full <- rbind(surveyQs_No_full, dat_full)
   }
