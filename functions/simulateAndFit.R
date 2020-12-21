@@ -7,27 +7,12 @@ simulateAndFit <- function(sim_label, ...){
   setupNo   <- vector("list", length = nrow(sim_label))
   setupMis  <- vector("list", length = nrow(sim_label))
   
-  unifLower <- 1.5
-  unifUpper <- 10
-  # Choose initial distribution parameters for rw that generate a time
-  # series mean and variance that most closely matches the other
-  # two misreporting scenarios.
-  opt_par <-optim(par = c(log(1), log(0.2)), # starting mu_c = exp(par[1]), sd_c = 0.001 + exp(par[2])
-                  fn = initsObj, 
-                  tsmean_target = 0.5 * (unifUpper + unifLower),
-                  tsvar_target = 1/12 * (unifUpper - unifLower)^2, 
-                  T = noScaledYearsSim)
-  mu_c <- exp(opt_par$par[1]) # lower bound of 0
-  sd_c <- 0.001 + exp(opt_par$par[2]) # lower bound of 0.001
+
   # Generate simulations
   for (i in 1:nrow(sim_label)) {
     simOut[[i]] <-
       sim(fit = fitNScod,
-          sim_label = sim_label[i,],
-          unifLower = unifLower, 
-          unifUpper = unifUpper,
-          mu_c = mu_c, 
-          sd_c = sd_c)
+          sim_label = sim_label[i,])
     
     # Prep simulation data for read.ices()
     prepSimData(simOut = simOut[[i]]) 
@@ -36,13 +21,13 @@ simulateAndFit <- function(sim_label, ...){
     setupNo[[i]] <- setupModel(conf = fitNScod$conf,
                                stock_dir = "simData",
                                misreportingType = "no misreporting",
-                               noScaledYears = noScaledYearsFit,
+                               noScaledYearsFit = 20,
                                sim_label = sim_label[i,]) 
     
     setupMis[[i]] <- setupModel(conf = fitNScod$conf,
                                 stock_dir = "simData",
                                 misreportingType = "rw",
-                                noScaledYears = noScaledYearsFit,
+                                noScaledYearsFit = 20,
                                 sim_label = sim_label[i,])
   }
   

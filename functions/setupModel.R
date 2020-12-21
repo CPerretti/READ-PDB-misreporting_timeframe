@@ -1,6 +1,6 @@
 # Setup data and params for sam model #####################
 setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
-                       noScaledYears = NULL, sim_label) {
+                       noScaledYearsFit = NULL, sim_label) {
   
   path_root <- paste0("./wg_MGWG/state-space/", stock_dir, "/")
   
@@ -41,10 +41,10 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
   keyLogScale[keyLogScale > -1] <- 0:(length(keyLogScale[keyLogScale > -1])-1)
   switch(misreportingType,
          `rw` = {
-           conf$noScaledYears <- noScaledYears
+           conf$noScaledYears <- noScaledYearsFit
            conf$keyLogScale <- keyLogScale
            conf$keyVarS <- conf$keyVarF #linking of scale variances
-           conf$keyScaledYears <- (max(dat$years) - noScaledYears + 1):max(dat$years)
+           conf$keyScaledYears <- (max(dat$years) - noScaledYearsFit + 1):max(dat$years)
            conf$fracMixS <- 0
            conf$corFlagS <- 2 #type of misreporting correlation among ages
            # Turn off estimation of correlated misreporting when misreporting is not random walk.
@@ -53,12 +53,12 @@ setupModel <- function(conf = NULL, stock_dir, misreportingType = NULL,
            if (sim_label$scenario != "rw") conf$corFlagS <- 0
               },
          fixed = {
-           conf$noScaledYears  <- noScaledYears
+           conf$noScaledYears  <- noScaledYearsFit
            conf$keyLogScale    <- keyLogScale
-           conf$keyScaledYears <- (max(dat$years) - noScaledYears + 1):max(dat$years)
+           conf$keyScaledYears <- (max(dat$years) - noScaledYearsFit + 1):max(dat$years)
            conf$keyParScaledYA <- matrix(data = rep(c(0), 
-                                                 each = noScaledYears * ncol(dat$propF)),
-                                         nrow = noScaledYears)
+                                                 each = noScaledYearsFit * ncol(dat$propF)),
+                                         nrow = noScaledYearsFit)
            conf$constRecBreaks <- numeric(0)
          },
          `no misreporting` = {

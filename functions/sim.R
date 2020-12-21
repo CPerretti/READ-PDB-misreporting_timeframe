@@ -1,6 +1,22 @@
 ## Simulation model #######################################
-sim <- function(fit, sim_label,
-                unifLower, unifUpper, mu_c, sd_c) {
+sim <- function(fit, sim_label) {
+  
+  # Set noScaledYears according to scenario
+  ifelse(sim_label$scenario == "rw10", noScaledYearsSim <- 10, noScaledYearsSim <- 20)
+  
+  unifLower <- 1.5
+  unifUpper <- 10
+  # Choose initial distribution parameters for rw that generate a time
+  # series mean and variance that most closely matches the other
+  # two misreporting scenarios.
+  
+  opt_par <-optim(par = c(log(1), log(0.2)), # starting mu_c = exp(par[1]), sd_c = 0.001 + exp(par[2])
+                  fn = initsObj, 
+                  tsmean_target = 0.5 * (unifUpper + unifLower),
+                  tsvar_target = 1/12 * (unifUpper - unifLower)^2, 
+                  T = noScaledYearsSim)
+  mu_c <- exp(opt_par$par[1]) # lower bound of 0
+  sd_c <- 0.001 + exp(opt_par$par[2]) # lower bound of 0.001
   
   fit$conf$constRecBreaks <- numeric(0) # Needed for new SAM
   keyLogScale <- fit$conf$keyLogFsta
@@ -9,25 +25,22 @@ sim <- function(fit, sim_label,
   nA <- ncol(fit$data$propF) # number of age-classes
   nT <- fit$data$noYears # length of time series
   
-  # Set noScaledYears according to scenario
-  ifelse(sim_label$scenario == "rw10", noScaledYears <- 10, noScaledYears <- 20)
-  
   # Setup keyLogScale to have unique logScale for each age that is fished
   nAs <- sum(keyLogScale[1,] > -1)
   
   if(sim_label$scenario == "uniform random") {
-           logS <- matrix(data = log(runif(nAs * noScaledYears, 
+           logS <- matrix(data = log(runif(nAs * noScaledYearsSim, 
                                            unifLower, unifUpper)),
-                              nrow = nAs, ncol = noScaledYears)
-           # logS <- matrix(data = log(rnorm(nAs * noScaledYears, 8, 2)),
-           #                    nrow = nAs, ncol = noScaledYears)
+                              nrow = nAs, ncol = noScaledYearsSim)
+           # logS <- matrix(data = log(rnorm(nAs * noScaledYearsSim, 8, 2)),
+           #                    nrow = nAs, ncol = noScaledYearsSim)
   }
   
   if(sim_label$scenario %in% c("rw","rw10")) { # correlated RW
            logSdLogScale <- log(sd_c)
-           rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYears)
-           # errS <- matrix(data = rnorm(nAs * noScaledYears, 0, exp(logSdLogScale)),
-           #                nrow = nAs, ncol = noScaledYears) #uncorrelated error
+           rw_logS_mat <- matrix(data = NA, nrow = nAs, ncol = noScaledYearsSim)
+           # errS <- matrix(data = rnorm(nAs * noScaledYearsSim, 0, exp(logSdLogScale)),
+           #                nrow = nAs, ncol = noScaledYearsSim) #uncorrelated error
            
            # Setup correlation matrix for correlated error 
            scor = matrix(NA, nrow = nAs, ncol = nAs)
@@ -42,30 +55,30 @@ sim <- function(fit, sim_label,
            
            svar <- exp(logSdLogScale)^2 * scor
         
-           errS <- matrix(data = MASS::mvrnorm(n = noScaledYears, mu = rep(0, nAs), Sigma = svar),
+           errS <- matrix(data = MASS::mvrnorm(n = noScaledYearsSim, mu = rep(0, nAs), Sigma = svar),
                           ncol = nAs) %>% t() # correlated error
            
            rw_logS_mat[,1] <- mu_c + errS[,1]
-           for(i in 2:noScaledYears){
+           for(i in 2:noScaledYearsSim){
              rw_logS_mat[,i] <- rw_logS_mat[,i-1] + errS[,i]
            }
            
-           logS <- matrix(data = rw_logS_mat, nrow = nAs, ncol = noScaledYears)
+           logS <- matrix(data = rw_logS_mat, nrow = nAs, ncol = noScaledYearsSim)
   }
   
   if(sim_label$scenario == "fixed") {
              # Misreporting on all ages
              logS <- matrix(data = rep(log(runif(1, unifLower, unifUpper)),
-                                           times = nAs * noScaledYears),
-                                nrow = nAs, ncol = noScaledYears)
+                                           times = nAs * noScaledYearsSim),
+                                nrow = nAs, ncol = noScaledYearsSim)
              # Misreporting only on ages 1-3
              # logS <- matrix(data = rep(c(log(runif(1, 1.5, 10)), 0), 
-             #                               each = nAs * noScaledYears / 2),
-             #                    nrow = nAs, ncol = noScaledYears, byrow = T)
+             #                               each = nAs * noScaledYearsSim / 2),
+             #                    nrow = nAs, ncol = noScaledYearsSim, byrow = T)
   }
   
   if(sim_label$scenario %in% c("no misreporting", "misspecified M")) {
-    logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYears)
+    logS <- matrix(data = log(1), nrow = nAs, ncol = noScaledYearsSim)
   }
   
   # Set F (need to replicate some elements to match ModelConf)
@@ -206,7 +219,7 @@ sim <- function(fit, sim_label,
   
   logCobs_N0 <- logCtru_N + errObs[, , "Residual catch"]
   logCobs_N <- logCobs_N0
-  logS_full <- cbind(matrix(data = 0, nrow = nrow(logS), ncol = nT - noScaledYears),
+  logS_full <- cbind(matrix(data = 0, nrow = nrow(logS), ncol = nT - noScaledYearsSim),
                          logS)
   
   for (a in 1:nA){
@@ -264,14 +277,14 @@ sim <- function(fit, sim_label,
   trueParams <- list(data = fit$data, conf = fit$conf, 
                      sdrep = fit$sdrep, pl = fit$pl)
   trueParams$conf$keyScaledYears <- 
-    (max(fit$data$years) - noScaledYears + 1):max(fit$data$years)
+    (max(fit$data$years) - noScaledYearsSim + 1):max(fit$data$years)
   trueParams$pl$logS <- logS_full
   if (sim_label$scenario == "random walk") trueParams$pl$logSdLogScale <- logSdLogScale
   trueParams$pl$logN <- logN
   dimnames(f) <- list(paste0("tru.", c(1:nA)), fit$data$years)
   trueParams$pl$logF <- logF
   return(list(trueParams = trueParams,
-              scaled_yearsSim = (max(fit$data$years) - noScaledYears + 1):max(fit$data$years),
+              scaled_yearsSim = (max(fit$data$years) - noScaledYearsSim + 1):max(fit$data$years),
               N = N, 
               logN = logN,
               SSB = SSB,

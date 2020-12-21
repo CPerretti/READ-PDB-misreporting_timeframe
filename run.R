@@ -23,24 +23,22 @@ source("loadFunctions.R")
 ## SIMULATED DATA ANALYSIS ##########################################
 
 #### Configure simulations ####
-noScaledYearsSim <- 20
-noScaledYearsFit <- 20
 scenarios <- c(#"uniform random", 
-               #"rw10",
-               #"rw"#,
+               "rw10",
+               "rw",
                #"fixed",
-               #"no misreporting",
+               "no misreporting",
                "misspecified M"
   )
 seed <- sample(1:1000, 1)
 set.seed(seed)
-nRep <- 10#300
+nRep <- 1#50#300
 sim_label <- expand.grid(replicate = 1:nRep, 
                          scenario = scenarios,
                          stringsAsFactors = F)
 
 #### RUN SIMULATIONS AND FIT MODELS ####
-simsAndFits <- simulateAndFit(sim_label)
+simsAndFits <- simulateAndFit(sim_label, noScaledYearsSim)
 
 simOutAccept <- simsAndFits$simOutAccept
 fitNoSimAccept <- simsAndFits$fitNoSimAccept
@@ -93,9 +91,18 @@ save(list = c("seed",
 
 ## Plot LO error comparison ##
 # Plot LOO CV error on survey observations #
-# plotSurveyError(errLO,
-#                 type = "LO",
-#                 scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+plotSurveyError(errLO,
+                type = "LO",
+                scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+
+## Plot LO estimates of survey Q
+plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+                    fitLO = fitNoSimLOAccept,
+                    fit = fitNoSimAccept)
+
+plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+                    fitLO = fitMisSimLOAccept,
+                    fit = fitMisSimAccept)
 
 # Plot LOO CV error on unobserved variables #
 # plotTsError(errLO,
@@ -121,7 +128,7 @@ save(list = c("seed",
 #                       misreportingType = "no misreporting")
 # setupMis <- setupModel(stock_dir = "GOMcod",
 #                        misreportingType = "rw",
-#                        noScaledYears = noScaledYearsFit)
+#                        noScaledYears = 10)
 # 
 # # Haddock: Replace first zero with small value
 # logobsOrig <- setupNo$dat$logobs
