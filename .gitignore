@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 /output/*
+/wg_MGWG/state-space/simData/*
