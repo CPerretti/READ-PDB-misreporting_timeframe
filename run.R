@@ -91,18 +91,18 @@ save(list = c("seed",
 
 ## Plot LO error comparison ##
 # Plot LOO CV error on survey observations #
-plotSurveyError(errLO,
-                type = "LO",
-                scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+# plotSurveyError(errLO,
+#                 type = "LO",
+#                 scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
 
 ## Plot LO estimates of survey Q
-plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
-                    fitLO = fitNoSimLOAccept,
-                    fit = fitNoSimAccept)
-
-plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
-                    fitLO = fitMisSimLOAccept,
-                    fit = fitMisSimAccept)
+# plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+#                     fitLO = fitNoSimLOAccept,
+#                     fit = fitNoSimAccept)
+# 
+# plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+#                     fitLO = fitMisSimLOAccept,
+#                     fit = fitMisSimAccept)
 
 # Plot LOO CV error on unobserved variables #
 # plotTsError(errLO,

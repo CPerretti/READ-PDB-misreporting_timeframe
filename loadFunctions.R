@@ -32,4 +32,5 @@ source("./functions/fit.R")
 source("./functions/calcErrLO.R")
 source("./functions/calcSurveyError.R")
 source("./functions/plotSurveyError.R")
+source("./functions/plotLeaveOutSurveyQ.R")
 
