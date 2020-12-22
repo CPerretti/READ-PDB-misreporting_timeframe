@@ -1,6 +1,10 @@
-plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
+plotSurveyError <- function(err, scaled_yearsSim = NULL, LOerr) {
 
   colors2use <- RColorBrewer::brewer.pal(4, "Dark2")
+  
+  scaled_yearsSimStart <- data.frame(scenario = c("random walk scenario", 
+                                                  "random walk 10yrs scenario"),
+                                     start = c(1995, 2005))
   
   # Plot mean error in leave out survey observation vs year
   err2plot <-
@@ -33,7 +37,7 @@ plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
     ylab("Median absolute percent error") +
     scale_color_manual(values = colors2use) +
     scale_fill_manual(values = colors2use) +
-    if (type == "LO") {
+    if (LOerr) {
       ggtitle("Survey estimation error in the leave-out year")
     } else {
       ggtitle("Survey estimation error")
@@ -44,15 +48,7 @@ plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
       theme(axis.title   = element_text(size = 14),
           plot.title   = element_text(size = 16),
           strip.text   = element_text(size = 9)) +
-    if(!is.null(scaled_yearsSim)) {
-      geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
-                                                "fixed scenario", 
-                                                "random walk scenario",
-                                                "uniform random scenario",
-                                                "misspecified M"),
-                                   xint = c(NA, rep(min(scaled_yearsSim), 3), NA)),
-                 aes(xintercept = xint))  
-    }
+      geom_vline(data = scaled_yearsSimStart, aes(xintercept = start))  
     
   
   print(p)
@@ -73,7 +69,7 @@ plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
     theme(axis.title   = element_text(size = 14),
           plot.title   = element_text(size = 16),
           strip.text   = element_text(size = 9)) +
-    if (type == "LO") {
+    if (LOerr) {
       ggtitle("Survey estimation error in the leave-out year")
     } else {
       ggtitle("Survey estimation error")
@@ -81,14 +77,7 @@ plotSurveyError <- function(err, scaled_yearsSim = NULL, type) {
     
   p <-
     p +
-    if(!is.null(scaled_yearsSim)) {
-      geom_vline(data = data.frame(scenario = c("no misreporting scenario",
-                                                "fixed scenario",
-                                                "random walk scenario",
-                                                "uniform random scenario"),
-                                   xint = c(NA, rep(min(scaled_yearsSim), 3))),
-                 aes(xintercept = xint))
-    }
+      geom_vline(data = scaled_yearsSimStart, aes(xintercept = start))
   
   print(p)
   

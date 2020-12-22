@@ -15,11 +15,11 @@ calcErr <- function(fit, simOut){
                                           "No misreporting", "Yes misreporting"),
            trueMisreporting = ifelse(tru == 1, "No misreporting", "Yes misreporting"))}) %>%
     mutate(scenario = ifelse(scenario == "rw", "random walk", scenario),
+           scenario = ifelse(scenario == "rw10", "random walk 10yrs", scenario),
            scenario = paste(scenario, "scenario"),
            scenario  = factor(scenario, levels = c("no misreporting scenario",
-                                                   "fixed scenario",
                                                    "random walk scenario",
-                                                   "uniform random scenario",
+                                                   "random walk 10yrs scenario",
                                                    "misspecified M scenario")))
   
   return(err)

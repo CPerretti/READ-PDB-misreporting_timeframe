@@ -84,7 +84,7 @@ save(list = c("seed",
 
 # Plot time series fit error
 # plotTsError(err,
-#             type = "Not LO",
+#             LOerr = T,
 #             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears,
 #             scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
 #             plotScale = F)
@@ -92,8 +92,7 @@ save(list = c("seed",
 ## Plot LO error comparison ##
 # Plot LOO CV error on survey observations #
 # plotSurveyError(errLO,
-#                 type = "LO",
-#                 scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim)
+#                 LOerr = T)
 
 ## Plot LO estimates of survey Q
 # plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,

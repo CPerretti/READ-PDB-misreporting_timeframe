@@ -1,8 +1,11 @@
 ## Plot timeseries error ##################################
-plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) {
+plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, LOerr, plotScale) {
   
   colors2use <- RColorBrewer::brewer.pal(4, "Dark2")
   
+  scaled_yearsSimStart <- data.frame(scenario = c("random walk scenario", 
+                                                  "random walk 10yrs scenario"),
+                                     start = c(1995, 2005))
   
   # Plot error in important variables vs year
   err2plot_CSSB <-
@@ -25,12 +28,7 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
     geom_line(aes(y = mape)) +
     geom_ribbon(aes(ymin = mape_lo, ymax = mape_hi), color = NA, alpha = 0.3) +
     geom_hline(yintercept = 0) +
-    geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
-                                              "fixed scenario", 
-                                              "random walk scenario",
-                                              "uniform random scenario"),
-                                 xint = c(NA, rep(min(scaled_yearsSim), 3))),
-               aes(xintercept = xint)) +
+    geom_vline(data = scaled_yearsSimStart, aes(xintercept = start)) +
     facet_grid(scenario~variable, scales = "free_y") +
     theme_bw() +
     xlab("Year") +
@@ -40,7 +38,7 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
     theme(axis.title   = element_text(size = 14),
           plot.title   = element_text(size = 16),
           strip.text   = element_text(size = 9)) +
-    if (type == "LO") {
+    if (LOerr) {
       ggtitle("Estimation error in leave-out year")
     } else {
       ggtitle("Estimation error")
@@ -56,12 +54,7 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
     geom_line(aes(y = error_pc_median)) +
     geom_ribbon(aes(ymin = error_pc_lo, ymax = error_pc_hi), color = NA, alpha = 0.3) +
     geom_hline(yintercept = 0) +
-    geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
-                                              "fixed scenario", 
-                                              "random walk scenario",
-                                              "uniform random scenario"),
-                                 xint = c(NA, rep(min(scaled_yearsSim), 3))),
-               aes(xintercept = xint)) +
+    geom_vline(data = scaled_yearsSimStart, aes(xintercept = start)) +
     facet_grid(scenario~variable, scales = "free_y") +
     theme_bw() +
     xlab("Year") +
@@ -71,7 +64,7 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
     theme(axis.title   = element_text(size = 14),
           plot.title   = element_text(size = 16),
           strip.text   = element_text(size = 9)) +
-    if (type == "LO") {
+    if (LOerr) {
       ggtitle("Estimation error in leave-out year")
     } else {
       ggtitle("Estimation error")
@@ -104,19 +97,14 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
         geom_line(aes(y = mape)) +
         geom_ribbon(aes(ymin = mape_lo, ymax = mape_hi), color = NA, alpha = 0.3) +
         geom_hline(yintercept = 0) +
-        geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
-                                                  "fixed scenario", 
-                                                  "random walk scenario",
-                                                  "uniform random scenario"),
-                                     xint = c(NA, rep(min(scaled_yearsSim), 3))),
-                   aes(xintercept = xint)) +
+        geom_vline(data = scaled_yearsSimStart, aes(xintercept = start)) +
         facet_grid(~scenario) +
         theme_bw() +
         xlab("Year") +
         ylab("Median absolute percent error") +
         scale_color_manual(values = colors2use[3]) +
         scale_fill_manual(values = colors2use[3]) +
-        if (type == "LO") {
+        if (LOerr) {
           ggtitle("Scale estimation error in leave-out year")
         } else {
           ggtitle("Scale estimation error")
@@ -133,19 +121,14 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
         geom_line(aes(y = error_pc_median)) +
         geom_ribbon(aes(ymin = error_pc_lo, ymax = error_pc_hi), color = NA, alpha = 0.3) +
         geom_hline(yintercept = 0) +
-        geom_vline(data = data.frame(scenario = c("no misreporting scenario", 
-                                                  "fixed scenario", 
-                                                  "random walk scenario",
-                                                  "uniform random scenario"),
-                                     xint = c(NA, rep(min(scaled_yearsSim), 3))),
-                   aes(xintercept = xint)) +
+        geom_vline(data = scaled_yearsSimStart, aes(xintercept = start)) +
         facet_grid(~scenario) +
         theme_bw() +
         xlab("Year") +
         ylab("Median percent error (fit - true)") +
         scale_color_manual(values = colors2use[3]) +
         scale_fill_manual(values = colors2use[3]) +
-        if (type == "LO") {
+        if (LOerr) {
           ggtitle("Scale estimation error in leave-out year")
         } else {
           ggtitle("Scale estimation error")
@@ -185,7 +168,7 @@ plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, type, plotScale) 
           scale_color_manual(values = c("black", colors2use[3])) +
           scale_fill_manual(values = c(colors2use[3]), guide = "none") +
           theme(legend.title = element_blank()) +
-          if (type == "LO") {
+          if (LOerr) {
             ggtitle(paste0("Scale parameter estimates in the leave-out year
                   (", scenarios2plot[i], ")"))
           } else {
