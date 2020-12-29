@@ -80,35 +80,31 @@ save(list = c("seed",
 #plotMeanFitVTru(errLO, simOutAccept[[1]])
 
 # Plot an example random effects at age
-# plotReTsAtAge(fitMisSimAccept[[1]], simOutAccept[[1]])
+#plotReTsAtAge(fitMisSimAccept[[1]], simOutAccept[[1]])
 
 # Plot time series fit error
-# plotTsError(err,
-#             LOerr = T,
-#             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears,
-#             scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
-#             plotScale = F)
+plotTsError(err,
+            LOerr = F,
+            scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears,
+            scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
+            plotScale = F)
 
 ## Plot LO error comparison ##
-# Plot LOO CV error on survey observations #
-# plotSurveyError(errLO,
-#                 LOerr = T)
+#Plot LOO CV error on survey observations #
+plotSurveyError(errLO,
+                LOerr = T)
 
 ## Plot LO estimates of survey Q
-# plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
-#                     fitLO = fitNoSimLOAccept,
-#                     fit = fitNoSimAccept)
-# 
-# plotLeaveOutSurveyQ(scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
-#                     fitLO = fitMisSimLOAccept,
-#                     fit = fitMisSimAccept)
+plotLeaveOutSurveyQ(sim_labelAccept,
+                    fitLONo = fitNoSimLOAccept,
+                    fitNo = fitNoSimAccept, 
+                    fitLOMis = fitMisSimLOAccept,
+                    fitMis = fitMisSimAccept)
 
 # Plot LOO CV error on unobserved variables #
-# plotTsError(errLO,
-#             type = "LO",
-#             scaled_yearsFit = fitMisSimAccept[[1]]$conf$keyScaledYears,
-#             scaled_yearsSim = simOutAccept[[1]]$scaled_yearsSim,
-#             plotScale = F)
+plotTsError(errLO,
+            LOerr = T,
+            plotScale = F)
 
 # Plot mean fit vs tru for LOO prediction
 #plotMeanFitVTru(errLO, simOutAccept[[1]])

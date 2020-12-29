@@ -1,5 +1,5 @@
 ## Plot timeseries error ##################################
-plotTsError <- function(err, scaled_yearsFit, scaled_yearsSim, LOerr, plotScale) {
+plotTsError <- function(err, LOerr, plotScale) {
   
   colors2use <- RColorBrewer::brewer.pal(4, "Dark2")
   
