@@ -16,7 +16,7 @@ plotLeaveOutSurveyQ <- function(sim_labelAccept, fitLONo, fitNo,
   for(h in 1:length(fitLONo)) {
     for(i in 1:length(fitLONo[[h]]$fits)) {
       fitNo2extract <- fitLONo[[h]]$fits[[i]]
-      fitMis2extract <- fitLONo[[h]]$fits[[i]]
+      fitMis2extract <- fitLOMis[[h]]$fits[[i]]
       
       if (class(fitNo2extract) != "try-error") {
         
@@ -71,7 +71,7 @@ plotLeaveOutSurveyQ <- function(sim_labelAccept, fitLONo, fitNo,
   surveyQs_2plot <-
    surveyQs_No %>%
     mutate(model = "base") %>%
-    rbind({surveyQs_Mis %>% mutate(model = "with misreporting")}) %>%
+    bind_rows({surveyQs_Mis %>% mutate(model = "with misreporting")}) %>%
     mutate(scenario = as.character(scenario),
            scenario = ifelse(scenario == "rw", "random walk", scenario),
            scenario = ifelse(scenario == "rw10", "random walk 10yrs", scenario),
@@ -80,15 +80,16 @@ plotLeaveOutSurveyQ <- function(sim_labelAccept, fitLONo, fitNo,
                                                    "random walk scenario",
                                                    "random walk 10yrs scenario",
                                                    "misspecified M scenario"))) %>%
-    gather(age, logQ, -scenario, -rep, -leaveOutYears, -survey) %>%
+    gather(age, logQ, -scenario, -rep, -leaveOutYears, -survey, -model) %>%
     mutate(age = paste0("age-", substr(age, 2,2)),
            Q = exp(logQ)) %>%
-    group_by(scenario, leaveOutYears, age) %>%
+    group_by(scenario, leaveOutYears, age, model) %>%
     summarise(Q_median = median(Q, na.rm = T),
               Q_hi  = quantile(Q, 0.75, na.rm = T),
               Q_lo  = quantile(Q, 0.25, na.rm = T)) %>%
-    left_join({rbind({surveyQs_No_full %>% mutate(model = "base")},
-                    {surveyQs_Mis_full %>% mutate(model = "with misreporting")}) %>%
+    mutate(dataset = "loo") %>%
+    bind_rows({bind_rows({surveyQs_No_full %>% mutate(model = "base")},
+                         {surveyQs_Mis_full %>% mutate(model = "with misreporting")}) %>%
         mutate(scenario = as.character(scenario),
                scenario = ifelse(scenario == "rw", "random walk", scenario),
                scenario = ifelse(scenario == "rw10", "random walk 10yrs", scenario),
@@ -97,37 +98,37 @@ plotLeaveOutSurveyQ <- function(sim_labelAccept, fitLONo, fitNo,
                                                        "random walk scenario",
                                                        "random walk 10yrs scenario",
                                                        "misspecified M scenario"))) %>%
-        gather(age, logQ, -scenario, -rep, -survey) %>%
+        gather(age, logQ, -scenario, -rep, -survey, -model) %>%
         mutate(age = paste0("age-", substr(age, 2,2)),
                Q = exp(logQ)) %>%
-        group_by(scenario, age) %>%
-        summarise(Q_median_full = median(Q, na.rm = T),
-                  Q_hi_full  = quantile(Q, 0.75, na.rm = T),
-                  Q_lo_full  = quantile(Q, 0.25, na.rm = T))})
-  
-  
-  
- 
-    model <- ifelse(is.numeric(fit[[1]]$pl$logS), "With misreporting", "Base")
-      
+        group_by(scenario, age, model) %>%
+        summarise(Q_median = median(Q, na.rm = T),
+                  Q_hi  = quantile(Q, 0.75, na.rm = T),
+                  Q_lo  = quantile(Q, 0.25, na.rm = T)) %>%
+        mutate(dataset = "full")})
+
     p <-
       ggplot(data = surveyQs_2plot,
-             aes(x = leaveOutYears, y = Q_median)) +
-      geom_line(aes(color = "loo dataset")) +
-      geom_ribbon(aes(ymin = Q_lo, ymax = Q_hi), fill = "red", alpha = 0.3) +
-      geom_line(aes(y = Q_median_full, color = "full dataset")) +
-      geom_ribbon(aes(ymin = Q_lo_full, ymax = Q_hi_full), fill = "black", alpha = 0.3) +
-      facet_grid(age ~ scenario) +
+             aes(x = leaveOutYears)) +
+      geom_line(data = surveyQs_2plot %>% filter(dataset == "loo"),
+                aes(y = Q_median, color = model), linetype = 1) +
+      geom_ribbon(data = surveyQs_2plot %>% filter(dataset == "loo"),
+                  aes(ymin = Q_lo, ymax = Q_hi, fill = model),
+                  alpha = 0.3) +
+      geom_hline(data = surveyQs_2plot %>% filter(dataset == "full"),
+                 aes(yintercept = Q_median, color = model), linetype = 2) +
+      facet_wrap(age ~ scenario, scales = "free", ncol = 4) +
       theme_bw() +
       theme(axis.title   = element_text(size = 14),
             plot.title   = element_text(size = 16),
             strip.text   = element_text(size = 9)) +
       xlab("Leave-out year") +
       ylab("Q estimate") +
-      scale_color_manual(values = c("black", "red")) +
-      ggtitle(paste0(model, " model Q estimates")) +
+      #scale_color_manual(values = c("black", "red")) +
+      ggtitle("loo vs full dataset Q estimates") +
       geom_vline(data = scaled_yearsSimStart, aes(xintercept = start))
     plot(p)
+
   
 }
 
